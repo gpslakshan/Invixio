@@ -27,7 +27,7 @@ export function Navbar() {
           <Image src="/logo.svg" alt="Invixio Logo" width={32} height={32} />
           <h2 className="text-2xl font-bold">
             <span className="text-violet-500">Inv</span>
-            oxie
+            ixio
           </h2>
         </div>
       </Link>

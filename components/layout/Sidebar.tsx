@@ -32,7 +32,7 @@ export function Sidebar() {
             <Image src={Logo} alt="logo" width={28} height={28} />
             <p className="text-2xl font-bold">
               <span className="text-violet-600">Inv</span>
-              oxie
+              ixio
             </p>
           </Link>
         </div>
