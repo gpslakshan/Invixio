@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @unique
+  firstName    String
+  lastName     String
+  email        String
+  imageUrl     String
+  hasOnboarded Boolean  @default(false)
+  businessType String?
+  currency     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  Invoices Invoice[] // One-to-many: User -> Invoices
+
+  @@map("users")
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  invoiceNumber  String        @unique
+  companyName    String
+  companyEmail   String
+  companyAddress String
+  clientName     String
+  clientEmail    String
+  clientAddress  String
+  invoiceDate    DateTime
+  dueDate        DateTime
+  subtotal       Float
+  tax            Float
+  discount       Float
+  total          Float
+  notes          String?
+  logoUrl        String?
+  status         InvoiceStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  userId String
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  InvoiceItem[] // One-to-many: Invoice -> InvoiceItems
+
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  description String
+  quantity    Int
+  unitPrice   Float
+  amount      Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_items")
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
