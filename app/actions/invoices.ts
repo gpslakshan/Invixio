@@ -78,12 +78,12 @@ export async function createInvoice(
     console.log("Invoice created and saved to DB successfully: ", invoice);
 
     // Generate PDF
-    const pdfBuffer = await generateInvoicePDF(invoice);
+    const pdfBase64 = await generateInvoicePDF(invoice);
 
     // Send email with PDF attachment
     await sendInvoiceEmail({
       invoice,
-      pdfBuffer,
+      pdfBase64,
       recipientEmail: invoice.clientEmail,
       senderEmail: invoice.companyEmail,
     });

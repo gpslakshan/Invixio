@@ -1,14 +1,20 @@
 import jsPDF from "jspdf";
-import { Resend } from "resend";
+import { SESClient, SendRawEmailCommand } from "@aws-sdk/client-ses";
 
-import InvoiceEmailTemplate from "@/emails/InvoiceEmailTemplate";
 import { InvoiceData, InvoiceEmailData } from "@/types/invoices";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Configure AWS SES
+const sesClient = new SESClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
 export async function generateInvoicePDF(
   invoice: InvoiceData
-): Promise<Buffer> {
+): Promise<string> {
   // Generate PDF
   const doc = new jsPDF();
 
@@ -54,45 +60,58 @@ export async function generateInvoicePDF(
   doc.text(`Total: $${invoice.total.toFixed(2)}`, 130, yPosition);
 
   // Convert to buffer
-  const pdfOutput = doc.output("arraybuffer");
-  return Buffer.from(pdfOutput);
+  const base64String = doc.output("datauristring").split(",")[1];
+  return base64String;
 }
 
-export async function sendInvoiceEmail({
-  invoice,
-  pdfBuffer,
-  recipientEmail,
-  senderEmail,
-}: InvoiceEmailData) {
+export async function sendInvoiceEmail(emailData: InvoiceEmailData) {
   try {
-    const { data, error } = await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: [recipientEmail],
-      subject: `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`,
-      react: InvoiceEmailTemplate({
-        invoiceNumber: invoice.invoiceNumber,
-        companyName: invoice.companyName,
-        clientName: invoice.clientName,
-        total: invoice.total,
-        dueDate: invoice.dueDate,
-      }),
-      attachments: [
-        {
-          filename: `invoice-${invoice.invoiceNumber}.pdf`,
-          content: pdfBuffer,
-        },
-      ],
+    // Create boundary for multipart message
+    const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36)}`;
+
+    // Construct the raw email message
+    const rawMessage = [
+      `From: ${process.env.SES_FROM_EMAIL}`, // Replace with verified sender email
+      `To: ${emailData.recipientEmail}`,
+      `Subject: Invoice ${emailData.invoice.invoiceNumber} from ${emailData.invoice.companyName}`,
+      "MIME-Version: 1.0",
+      `Content-Type: multipart/mixed; boundary="${boundary}"`,
+      "",
+      `--${boundary}`,
+      "Content-Type: text/plain; charset=UTF-8",
+      "Content-Transfer-Encoding: 7bit",
+      "",
+      "Hello,",
+      "",
+      "Please find the attached Invoice.",
+      "",
+      "Best regards,",
+      `${emailData.invoice.companyName}`,
+      "",
+      `--${boundary}`,
+      "Content-Type: application/pdf",
+      "Content-Transfer-Encoding: base64",
+      `Content-Disposition: attachment; filename="invoice-${emailData.invoice.invoiceNumber}"`,
+      "",
+      emailData.pdfBase64,
+      "",
+      `--${boundary}--`,
+    ].join("\n");
+
+    // Send the email
+    const command = new SendRawEmailCommand({
+      RawMessage: {
+        Data: Buffer.from(rawMessage),
+      },
+      Source: process.env.SES_FROM_EMAIL!, // Must be verified in SES
+      Destinations: [emailData.recipientEmail], // Can be multiple recipients
     });
 
-    if (error) {
-      console.error("Failed to send email", error);
-      throw new Error(`Failed to send email`);
-    }
-
-    console.log("Invoice email sent successfully:", data);
-    return data;
+    const result = await sesClient.send(command);
+    console.log("Email sent successfully:", result.MessageId);
+    return result;
   } catch (error) {
-    console.error("Error sending invoice email:", error);
+    console.error("Error sending email:", error);
     throw error;
   }
 }

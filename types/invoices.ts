@@ -47,7 +47,7 @@ export type InvoiceEmailData = {
     total: number;
     dueDate: Date;
   };
-  pdfBuffer: Buffer;
+  pdfBase64: string;
   recipientEmail: string;
   senderEmail: string;
 };
