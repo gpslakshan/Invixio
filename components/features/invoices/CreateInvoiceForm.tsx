@@ -166,6 +166,10 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     if (result.status === "error") {
       toast.error(result.message);
       setSubmittingForm(false);
+    } else if (result.status === "warning") {
+      toast.warning(result.message);
+      setSubmittingForm(false);
+      router.push("/dashboard/invoices");
     } else {
       toast.success(result.message);
       setSubmittingForm(false);
@@ -608,10 +612,10 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               {uploadingLogo
                 ? "Uploading Logo..."
                 : deletingLogo
-                ? "Removing Logo..."
-                : submittingForm
-                ? "Submitting..."
-                : "Create Invoice"}
+                  ? "Removing Logo..."
+                  : submittingForm
+                    ? "Submitting..."
+                    : "Create Invoice"}
             </Button>
           </div>
         </form>

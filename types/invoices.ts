@@ -35,19 +35,3 @@ export type InvoiceData = {
     amount: number;
   }>;
 };
-
-export type InvoiceEmailData = {
-  invoice: {
-    id: string;
-    invoiceNumber: string;
-    companyName: string;
-    companyEmail: string;
-    clientName: string;
-    clientEmail: string;
-    total: number;
-    dueDate: Date;
-  };
-  pdfBase64: string;
-  recipientEmail: string;
-  senderEmail: string;
-};

@@ -81,12 +81,16 @@ export async function createInvoice(
     const pdfBase64 = await generateInvoicePDF(invoice);
 
     // Send email with PDF attachment
-    await sendInvoiceEmail({
-      invoice,
-      pdfBase64,
-      recipientEmail: invoice.clientEmail,
-      senderEmail: invoice.companyEmail,
-    });
+    const emailResult = await sendInvoiceEmail(invoice, pdfBase64);
+
+    if (!emailResult.success) {
+      console.error("Failed to send invoice email:", emailResult.error);
+      return {
+        status: "warning",
+        message:
+          "Invoice created successfully, but failed to send email. Please send manually.",
+      };
+    }
 
     console.log(`Invoice sent successfully to email: ${invoice.clientEmail}`);
 

@@ -27,7 +27,7 @@ export const InvoiceEmailTemplate = ({
   total = 90.99,
   dueDate = new Date("2025-08-30"),
 }: Props) => {
-  const previewText = `Invoice ${invoiceNumber} from ${companyName}`;
+  const previewText = `Please find the attached Invoice from ${companyName}.`;
 
   return (
     <Html>
