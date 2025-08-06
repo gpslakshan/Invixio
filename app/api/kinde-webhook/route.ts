@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import jwksClient from "jwks-rsa";
-import jwt from "jsonwebtoken";
+import jwt, { Jwt } from "jsonwebtoken";
 import { prisma } from "@/lib/db";
 
 // The Kinde issuer URL should already be in your `.env` file
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const token = await req.text();
 
     // Decode the token
-    const { header } = jwt.decode(token, { complete: true }) as any;
+    const { header } = jwt.decode(token, { complete: true }) as Jwt;
     const { kid } = header;
 
     // Verify the token
