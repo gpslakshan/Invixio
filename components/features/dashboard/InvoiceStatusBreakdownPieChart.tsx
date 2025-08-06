@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { InvoiceStatusItem } from "@/types/dashboard";
+import { InvoiceStatusItem } from "@/types";
 import {
   ResponsiveContainer,
   Pie,

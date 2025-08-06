@@ -1,5 +1,19 @@
 import { z } from "zod";
-import { getTodayDate } from "../utils";
+import { getTodayDate } from "./utils";
+
+export const onboardingSchema = z.object({
+  businessType: z.enum(["freelancer", "small_business", "other"], {
+    error: () => ({ message: "Please tell us about your business." }),
+  }),
+  currency: z
+    .string({
+      error: (iss) =>
+        iss.input === undefined
+          ? "Please choose a preferred currency."
+          : "Invalid input.",
+    })
+    .min(1, "Please choose a preferred currency."),
+});
 
 // Zod schema for create invoice form validation
 export const invoiceSchema = z.object({

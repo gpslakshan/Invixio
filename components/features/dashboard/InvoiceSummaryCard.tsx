@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { InvoiceSummaryItem } from "@/types/dashboard";
+import { InvoiceSummaryItem } from "@/types";
 
 export function InvoiceSummaryCard({ item }: { item: InvoiceSummaryItem }) {
   return (

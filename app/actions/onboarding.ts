@@ -1,13 +1,13 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db";
 import { z } from "zod";
-import { formSchema } from "@/lib/schemas/onboarding";
 import { Prisma } from "@prisma/client";
-import { getCurrentUser } from "@/utils/auth";
+import { onboardingSchema } from "@/lib/schemas";
+import { getCurrentUser } from "@/lib/utils";
 
 export async function completeOnboardingProcess(
-  data: z.infer<typeof formSchema>
+  data: z.infer<typeof onboardingSchema>
 ) {
   try {
     const user = await getCurrentUser();

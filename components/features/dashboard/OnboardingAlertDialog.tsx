@@ -28,8 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { formSchema } from "@/lib/schemas/onboarding";
-import { currencies } from "@/constants/onboarding";
+import { currencies } from "@/constants";
 import {
   Popover,
   PopoverContent,
@@ -46,6 +45,7 @@ import {
 import { useState } from "react";
 import { completeOnboardingProcess } from "@/app/actions/onboarding";
 import { toast } from "sonner";
+import { onboardingSchema } from "@/lib/schemas";
 
 const businessTypeOptions: {
   label: string;
@@ -75,13 +75,13 @@ interface Props {
 
 const OnboardingAlertDialog = ({ isOpen }: Props) => {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(isOpen);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof onboardingSchema>>({
+    resolver: zodResolver(onboardingSchema),
   });
 
   const selectedBusinessType = form.watch("businessType");
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof onboardingSchema>) => {
     const result = await completeOnboardingProcess(data);
     if (result.status === "error") {
       toast.error(result.message);

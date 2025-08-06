@@ -1,6 +1,5 @@
 import CreateInvoiceForm from "@/components/features/invoices/CreateInvoiceForm";
-import { getCurrentUser } from "@/utils/auth";
-import { fetchUserCurrency } from "@/utils/users";
+import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
 
 export default async function CreateInvoicePage() {
   const user = await getCurrentUser();

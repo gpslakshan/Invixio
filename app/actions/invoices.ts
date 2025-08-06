@@ -1,12 +1,15 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db";
+import { invoiceSchema } from "@/lib/schemas";
+import {
+  getCurrentUser,
+  generateInvoicePDF,
+  sendInvoiceEmail,
+} from "@/lib/utils";
+import { InvoiceFormData } from "@/types";
 import { Prisma } from "@prisma/client";
-import { getCurrentUser } from "@/utils/auth";
-import { InvoiceFormData } from "@/types/invoices";
-import { invoiceSchema } from "@/lib/schemas/invoices";
 import { revalidatePath } from "next/cache";
-import { generateInvoicePDF, sendInvoiceEmail } from "@/utils/invoices";
 
 export async function createInvoice(
   formData: InvoiceFormData,

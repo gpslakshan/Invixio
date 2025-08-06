@@ -1,6 +1,6 @@
-import { Invoice } from "@/types/invoices";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { Invoice } from "@/types";
 
 async function getData(): Promise<Invoice[]> {
   // Fetch data from your API here.

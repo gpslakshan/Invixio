@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { QuickStatItem } from "@/types/dashboard";
+import { QuickStatItem } from "@/types";
 
 export function QuickStatsCard({ item }: { item: QuickStatItem }) {
   return (

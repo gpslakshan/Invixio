@@ -20,8 +20,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { invoiceSchema } from "@/lib/schemas/invoices";
-import { InvoiceFormData } from "@/types/invoices";
 import {
   Popover,
   PopoverContent,
@@ -32,6 +30,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { createInvoice } from "@/app/actions/invoices";
 import { useRouter } from "next/navigation";
+import { invoiceSchema } from "@/lib/schemas";
+import { InvoiceFormData } from "@/types";
 
 interface Props {
   currency: string;

@@ -7,7 +7,7 @@ import {
   InvoiceSummaryItem,
   QuickStatItem,
   RevenueByMonthItem,
-} from "@/types/dashboard";
+} from "@/types";
 import {
   DollarSign,
   FileText,

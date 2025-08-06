@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { RevenueByMonthItem } from "@/types/dashboard";
+import { RevenueByMonthItem } from "@/types";
 import {
   ResponsiveContainer,
   XAxis,

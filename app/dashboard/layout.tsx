@@ -1,9 +1,8 @@
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { getCurrentUser } from "@/utils/auth";
 import { syncUserToDatabase } from "../actions/user";
-import { getUserOnboardingStatus } from "@/utils/onboarding";
 import OnboardingAlertDialog from "@/components/features/dashboard/OnboardingAlertDialog";
+import { getCurrentUser, getUserOnboardingStatus } from "@/lib/utils";
 
 export default async function DashboardLayout({
   children,

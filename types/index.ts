@@ -1,5 +1,30 @@
-import { invoiceSchema } from "@/lib/schemas/invoices";
+import { invoiceSchema } from "@/lib/schemas";
+import { JSX } from "react";
 import { z } from "zod";
+
+export interface InvoiceSummaryItem {
+  title: string;
+  value: string;
+  description: string;
+  icon: JSX.Element;
+}
+
+export interface QuickStatItem {
+  title: string;
+  value: string;
+  description: string;
+  icon: JSX.Element;
+}
+
+export interface RevenueByMonthItem {
+  month: string;
+  revenue: number;
+}
+
+export interface InvoiceStatusItem {
+  name: "Paid" | "Unpaid" | "Overdue" | "Canceled";
+  value: number;
+}
 
 export type Invoice = {
   id: string;
