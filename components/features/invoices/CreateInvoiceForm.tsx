@@ -27,9 +27,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn, deleteFromS3, handleLogoUpload } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { deleteFromS3, handleFileUpload } from "@/lib/file-upload";
 import { toast } from "sonner";
 import { createInvoice } from "@/app/actions/invoices";
 import { useRouter } from "next/navigation";
@@ -115,7 +114,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     setUploadingLogo(true);
 
     try {
-      const fileUrl = await handleFileUpload(file);
+      const fileUrl = await handleLogoUpload(file);
       setLogoUrl(fileUrl); // Store the S3 URL
       console.log("Logo uploaded successfully:", fileUrl);
     } catch (error) {
