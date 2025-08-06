@@ -9,6 +9,7 @@ import {
   Row,
   Section,
   Text,
+  Link,
 } from "@react-email/components";
 import * as React from "react";
 
@@ -18,16 +19,18 @@ interface Props {
   clientName: string;
   total: number;
   dueDate: Date;
+  downloadUrl: string;
 }
 
 export const InvoiceEmailTemplate = ({
-  invoiceNumber = "#INV-9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-  companyName = "Test Co.",
-  clientName = "John Doe",
-  total = 90.99,
-  dueDate = new Date("2025-08-30"),
+  invoiceNumber,
+  companyName,
+  clientName,
+  total,
+  dueDate,
+  downloadUrl,
 }: Props) => {
-  const previewText = `Please find the attached Invoice from ${companyName}.`;
+  const previewText = `Your invoice ${invoiceNumber} from ${companyName} is ready for download.`;
 
   return (
     <Html>
@@ -41,17 +44,14 @@ export const InvoiceEmailTemplate = ({
                 Invoice
               </Text>
             </Section>
-
             <Section className="p-8">
               <Text className="text-base leading-6 mb-5 m-0">
                 Dear {clientName},
               </Text>
-
               <Text className="text-sm leading-6 text-slate-600 my-4">
-                Please find attached your invoice{" "}
-                <strong>{invoiceNumber}</strong> from {companyName}.
+                Your invoice <strong>{invoiceNumber}</strong> from {companyName}{" "}
+                is ready for download.
               </Text>
-
               <Section className="bg-slate-50 rounded-lg p-5 my-5">
                 <Row className="mb-3">
                   <Column className="w-full align-top">
@@ -85,23 +85,30 @@ export const InvoiceEmailTemplate = ({
                 </Row>
               </Section>
 
+              {/* Download Button Section */}
+              <Section className="text-center my-8">
+                <Link
+                  href={downloadUrl}
+                  className="bg-violet-600 text-white px-8 py-3 rounded-lg font-semibold text-base no-underline inline-block"
+                >
+                  Download Invoice PDF
+                </Link>
+              </Section>
+
               <Text className="text-sm leading-6 text-slate-600 my-4">
-                Please review the attached PDF for complete details. If you have
+                Click the button above to download your invoice PDF. If you have
                 any questions regarding this invoice, please don't hesitate to
                 contact us.
               </Text>
-
               <Text className="text-sm leading-6 text-slate-600 my-4">
                 Thank you for your business!
               </Text>
-
               <Text className="text-sm leading-6 text-slate-600 mt-8">
                 Best regards,
                 <br />
                 {companyName}
               </Text>
             </Section>
-
             <Section className="border-t border-slate-200 px-8 py-5 mt-5">
               <Text className="text-xs text-slate-400 text-center m-0">
                 This email was sent automatically. Please do not reply to this

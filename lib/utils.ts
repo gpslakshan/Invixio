@@ -5,12 +5,14 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs";
 import { prisma } from "@/lib/db";
 import jsPDF from "jspdf";
-import { SendRawEmailCommand } from "@aws-sdk/client-ses";
+import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import { render } from "@react-email/components";
 import InvoiceEmailTemplate from "@/emails/InvoiceEmailTemplate";
 
 import { sesClient } from "@/lib/ses";
 import { InvoiceData } from "@/types";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { BUCKET_NAME, s3Client } from "./s3";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -155,9 +157,7 @@ export const handleLogoUpload = async (file: File) => {
   return fileUrl;
 };
 
-export async function generateInvoicePDF(
-  invoice: InvoiceData
-): Promise<string> {
+export function generateInvoicePDF(invoice: InvoiceData): Buffer<ArrayBuffer> {
   // Generate PDF
   const doc = new jsPDF();
 
@@ -203,14 +203,51 @@ export async function generateInvoicePDF(
   doc.text(`Total: $${invoice.total.toFixed(2)}`, 130, yPosition);
 
   // Convert to buffer
-  const base64String = doc.output("datauristring").split(",")[1];
-  return base64String;
+  const arrayBuffer = doc.output("arraybuffer");
+  const pdfOutput = Buffer.from(arrayBuffer);
+  return pdfOutput;
+}
+
+// function to upload PDF to S3
+export async function uploadPDFToS3(
+  pdfBuffer: Buffer<ArrayBuffer>,
+  fileName: string
+): Promise<{ success: boolean; url?: string; error?: string }> {
+  try {
+    // Generate S3 key with folder structure
+    const s3Key = `invoices/${fileName}`;
+
+    // Upload to S3
+    const uploadCommand = new PutObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: s3Key,
+      Body: pdfBuffer,
+      ContentType: "application/pdf",
+      ContentDisposition: `attachment; filename="${fileName}"`,
+    });
+
+    await s3Client.send(uploadCommand);
+
+    // Generate the S3 URL
+    const s3Url = `https://${BUCKET_NAME}.s3.${process.env.AWS_REGION || "ap-south-1"}.amazonaws.com/${s3Key}`;
+
+    return {
+      success: true,
+      url: s3Url,
+    };
+  } catch (error) {
+    console.error("Error uploading PDF to S3:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown S3 upload error",
+    };
+  }
 }
 
 // Email sending function
 export async function sendInvoiceEmail(
   invoice: InvoiceData,
-  pdfBase64: string
+  downloadUrl: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     // Render the email template to HTML
@@ -221,27 +258,30 @@ export async function sendInvoiceEmail(
         clientName: invoice.clientName,
         total: invoice.total,
         dueDate: new Date(invoice.dueDate),
+        downloadUrl: downloadUrl,
       })
     );
 
-    // For attachments with SES, we need to use raw email format
-    const rawEmailData = createRawEmailWithAttachment(
-      process.env.SES_FROM_EMAIL!,
-      invoice.clientEmail,
-      `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`,
-      emailHtml,
-      pdfBase64,
-      `invoice-${invoice.invoiceNumber}.pdf`
-    );
-
-    // Send raw email with attachment
-    const rawEmailParams = {
-      RawMessage: {
-        Data: rawEmailData,
+    const params: SendEmailCommandInput = {
+      Source: process.env.SES_FROM_EMAIL!,
+      Destination: {
+        ToAddresses: [invoice.clientEmail],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: emailHtml,
+          },
+        },
+        Subject: {
+          Charset: "UTF-8",
+          Data: `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`,
+        },
       },
     };
 
-    const command = new SendRawEmailCommand(rawEmailParams);
+    const command = new SendEmailCommand(params);
     await sesClient.send(command);
 
     return { success: true };
@@ -252,46 +292,4 @@ export async function sendInvoiceEmail(
       error: error instanceof Error ? error.message : "Unknown email error",
     };
   }
-}
-
-// Helper function to create raw email with attachment
-function createRawEmailWithAttachment(
-  fromEmail: string,
-  toEmail: string,
-  subject: string,
-  htmlBody: string,
-  attachmentBase64: string,
-  attachmentName: string
-): Buffer {
-  const boundary = "----=_NextPart_" + Date.now();
-
-  let rawEmail = "";
-
-  // Email headers
-  rawEmail += `From: ${fromEmail}\r\n`;
-  rawEmail += `To: ${toEmail}\r\n`;
-  rawEmail += `Subject: ${subject}\r\n`;
-  rawEmail += `MIME-Version: 1.0\r\n`;
-  rawEmail += `Content-Type: multipart/mixed; boundary="${boundary}"\r\n\r\n`;
-
-  // HTML email body
-  rawEmail += `--${boundary}\r\n`;
-  rawEmail += `Content-Type: text/html; charset=UTF-8\r\n`;
-  rawEmail += `Content-Transfer-Encoding: 7bit\r\n\r\n`;
-  rawEmail += `${htmlBody}\r\n\r\n`;
-
-  // PDF attachment
-  rawEmail += `--${boundary}\r\n`;
-  rawEmail += `Content-Type: application/pdf\r\n`;
-  rawEmail += `Content-Transfer-Encoding: base64\r\n`;
-  rawEmail += `Content-Disposition: attachment; filename="${attachmentName}"\r\n\r\n`;
-
-  // Convert base64 and add line breaks every 76 characters
-  const base64WithLineBreaks =
-    attachmentBase64.match(/.{1,76}/g)?.join("\r\n") || attachmentBase64;
-  rawEmail += `${base64WithLineBreaks}\r\n\r\n`;
-
-  rawEmail += `--${boundary}--\r\n`;
-
-  return Buffer.from(rawEmail);
 }

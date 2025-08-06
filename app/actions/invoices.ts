@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   generateInvoicePDF,
   sendInvoiceEmail,
+  uploadPDFToS3,
 } from "@/lib/utils";
 import { InvoiceFormData } from "@/types";
 import { Prisma } from "@prisma/client";
@@ -81,10 +82,26 @@ export async function createInvoice(
     console.log("Invoice created and saved to DB successfully: ", invoice);
 
     // Generate PDF
-    const pdfBase64 = await generateInvoicePDF(invoice);
+    const pdfBuffer = generateInvoicePDF(invoice);
 
-    // Send email with PDF attachment
-    const emailResult = await sendInvoiceEmail(invoice, pdfBase64);
+    // Upload PDF to S3
+    const s3UploadResult = await uploadPDFToS3(
+      pdfBuffer,
+      `invoice-${invoice.id}.pdf`
+    );
+
+    if (!s3UploadResult.success) {
+      console.error("Failed to upload PDF to S3:", s3UploadResult.error);
+      return {
+        status: "error",
+        message: "Failed to upload PDF. Please try again.",
+      };
+    }
+
+    console.log("PDF uploaded to S3 successfully:", s3UploadResult.url);
+
+    // Send email with S3 download link
+    const emailResult = await sendInvoiceEmail(invoice, s3UploadResult.url!);
 
     if (!emailResult.success) {
       console.error("Failed to send invoice email:", emailResult.error);
@@ -98,6 +115,7 @@ export async function createInvoice(
     console.log(`Invoice sent successfully to email: ${invoice.clientEmail}`);
 
     revalidatePath("/dashboard/invoices"); // Update cached invoices
+
     return {
       status: "success",
       message: "Invoice created and sent successfully.",
