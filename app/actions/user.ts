@@ -20,7 +20,6 @@ export async function syncUserToDatabase(
           email: user.email!,
           firstName: user.given_name || "",
           lastName: user.family_name || "",
-          imageUrl: user.picture || "",
         },
       });
     } else {
@@ -31,7 +30,6 @@ export async function syncUserToDatabase(
           email: user.email!,
           firstName: user.given_name || "",
           lastName: user.family_name || "",
-          imageUrl: user.picture || "",
         },
       });
     }

@@ -1,6 +1,5 @@
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { syncUserToDatabase } from "../actions/user";
 import OnboardingAlertDialog from "@/components/features/dashboard/OnboardingAlertDialog";
 import { getCurrentUser, getUserOnboardingStatus } from "@/lib/utils";
 
@@ -13,7 +12,7 @@ export default async function DashboardLayout({
   let isAlertDialogOpened = false;
 
   if (user) {
-    await syncUserToDatabase(user);
+    // await syncUserToDatabase(user);
     const { needsOnboarding } = await getUserOnboardingStatus(user);
     isAlertDialogOpened = needsOnboarding;
   } // we don't need to check for the "user" is not existing scenario here because "middleware.ts" file is already making sure we can't access dashboard routes if the user is not logged in
