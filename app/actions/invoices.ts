@@ -7,9 +7,9 @@ import {
   generateInvoicePDF,
   sendInvoiceEmail,
   uploadPDFToS3,
+  generateInvoiceNumber,
 } from "@/lib/utils";
 import { InvoiceFormData } from "@/types";
-import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export async function createInvoice(
@@ -46,10 +46,13 @@ export async function createInvoice(
       (validatedData.data.tax || 0) -
       (validatedData.data.discount || 0);
 
+    // Generate invoice number
+    const invoiceNumber = await generateInvoiceNumber();
+
     // Create invoice in database
     const invoice = await prisma.invoice.create({
       data: {
-        invoiceNumber: validatedData.data.invoiceNumber,
+        invoiceNumber,
         companyName: validatedData.data.companyName,
         companyEmail: validatedData.data.companyEmail,
         companyAddress: validatedData.data.companyAddress,
@@ -100,7 +103,7 @@ export async function createInvoice(
       console.error("Failed to upload PDF to S3:", s3UploadResult.error);
       return {
         status: "error",
-        message: "Failed to upload PDF. Please try again.",
+        message: "Something went wrong. Please try again.",
       };
     }
 
@@ -112,9 +115,8 @@ export async function createInvoice(
     if (!emailResult.success) {
       console.error("Failed to send invoice email:", emailResult.error);
       return {
-        status: "warning",
-        message:
-          "Invoice created successfully, but failed to send email. Please send manually.",
+        status: "error",
+        message: "Something went wrong. Please try again.",
       };
     }
 
@@ -128,16 +130,10 @@ export async function createInvoice(
     };
   } catch (error) {
     console.error("Error creating invoice:", error);
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      return {
-        status: "error",
-        message: "Database Error: Failed to create invoice.",
-      };
-    }
 
     return {
       status: "error",
-      message: "Error creating invoice.",
+      message: "Something went wrong. Please try again.",
     };
   }
 }

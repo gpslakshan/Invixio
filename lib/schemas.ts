@@ -28,7 +28,6 @@ export const invoiceSchema = z.object({
   clientAddress: z.string().min(1, "Client address is required"),
 
   // Invoice details
-  invoiceNumber: z.string().min(1, "Invoice number is required"),
   invoiceDate: z.date().refine(
     (date) => {
       const today = getTodayDate();

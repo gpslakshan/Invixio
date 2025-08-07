@@ -11,7 +11,6 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { v4 as uuidv4 } from "uuid";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -65,7 +64,6 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       clientName: "",
       clientEmail: "",
       clientAddress: "",
-      invoiceNumber: `#INV_${uuidv4()}`,
       invoiceDate: new Date(),
       items: [],
       tax: 0,
@@ -181,10 +179,6 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     if (result.status === "error") {
       toast.error(result.message);
       setSubmittingForm(false);
-    } else if (result.status === "warning") {
-      toast.warning(result.message);
-      setSubmittingForm(false);
-      router.push("/dashboard/invoices");
     } else {
       toast.success(result.message);
       setSubmittingForm(false);
@@ -298,7 +292,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
           {/* Middle Section: Bill To and Invoice Info */}
           <div className="flex flex-col md:flex-row justify-between gap-6 mt-6">
             <div className="space-y-4 w-full md:w-1/2">
-              <Label className="text-lg font-semibold">Bill To</Label>
+              <h2 className="text-lg font-semibold">Bill To</h2>
               <FormField
                 control={form.control}
                 name="clientName"
@@ -341,19 +335,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               />
             </div>
             <div className="space-y-4 w-full md:w-1/2">
-              <Label className="text-lg font-semibold">Invoice</Label>
-              <FormField
-                control={form.control}
-                name="invoiceNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input {...field} placeholder="Invoice No." disabled />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <h2 className="text-lg font-semibold">Invoice Details</h2>
               <FormField
                 control={form.control}
                 name="invoiceDate"
@@ -430,32 +412,40 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                   </FormItem>
                 )}
               />
+              <div className="flex gap-2 items-center">
+                <InfoIcon className="text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">
+                  Invoice number will be auto-generated.
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Invoice Items */}
           <div>
-            <Label className="text-lg font-semibold mb-3">Invoice Items</Label>
+            <h2 className="text-lg font-semibold mb-3">Invoice Items</h2>
             {fields.length > 0 && (
               <div className="hidden md:grid grid-cols-6 gap-2 font-medium text-sm text-gray-600 mb-1">
-                <div className="col-span-2">Description</div>
-                <div className="col-span-1">Qty</div>
-                <div className="col-span-1">Unit Price</div>
-                <div className="col-span-1">Amount</div>
-                <div className="col-span-1 text-left"> </div>
+                <div className="md:col-span-2">Description</div>
+                <div className="md:col-span-1">Qty</div>
+                <div className="md:col-span-1">Unit Price</div>
+                <div className="md:col-span-1">Amount</div>
+                <div className="md:col-span-1 text-center md:text-left"> </div>
               </div>
             )}
             <div className="space-y-2">
               {fields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="grid grid-cols-1 md:grid-cols-6 gap-2 items-start"
+                  className="p-2 grid grid-cols-1 md:grid-cols-6 gap-2 items-start rounded-xl border bg-card text-card-foreground shadow 
+                  md:bg-transparent md:rounded-none md:border-0 md:shadow-none md:p-0"
                 >
                   <FormField
                     control={form.control}
                     name={`items.${index}.description`}
                     render={({ field }) => (
                       <FormItem className="md:col-span-2">
+                        <FormLabel className="md:hidden">Description</FormLabel>
                         <FormControl>
                           <Input placeholder="Description" {...field} />
                         </FormControl>
@@ -468,6 +458,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                     name={`items.${index}.quantity`}
                     render={({ field }) => (
                       <FormItem className="md:col-span-1">
+                        <FormLabel className="md:hidden">Qty</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -487,6 +478,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                     name={`items.${index}.unitPrice`}
                     render={({ field }) => (
                       <FormItem className="md:col-span-1">
+                        <FormLabel className="md:hidden">Unit Price</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -503,6 +495,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                     )}
                   />
                   <div className="md:col-span-1">
+                    <Label className="md:hidden mb-2">Amount</Label>
                     <Input
                       type="number"
                       value={(
@@ -513,12 +506,24 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                     />
                   </div>
                   <div className="flex md:col-span-1">
+                    {/* Tabs and Desktop Delete button */}
                     <Button
                       type="button"
                       variant="ghost"
+                      className="hidden md:block"
                       onClick={() => handleRemoveItem(index)}
                     >
                       <Trash2Icon size={18} />
+                    </Button>
+
+                    {/* Mobile Delete button */}
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="w-full md:hidden"
+                      onClick={() => handleRemoveItem(index)}
+                    >
+                      <Trash2Icon /> Delete Item
                     </Button>
                   </div>
                 </div>
