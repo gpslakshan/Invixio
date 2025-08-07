@@ -64,6 +64,14 @@ export const invoiceSchema = z.object({
   tax: z.number().min(0, "Tax must be 0 or greater"),
   discount: z.number().min(0, "Discount must be 0 or greater"),
 
+  // Bank details
+  bankName: z.string().min(1, "Bank name is required"),
+  accountName: z.string().min(1, "Account name is required"),
+  accountNumber: z.string().min(1, "Account number is required"),
+  sortCode: z.string().optional(),
+  IBAN: z.string().optional(),
+  swiftBicCode: z.string().optional(),
+
   // Additional notes
   notes: z.string().optional(),
 });

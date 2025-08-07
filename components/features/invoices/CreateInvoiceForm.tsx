@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { CalendarIcon, Trash2Icon, UploadCloudIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  InfoIcon,
+  Trash2Icon,
+  UploadCloudIcon,
+} from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -32,6 +37,11 @@ import { createInvoice } from "@/app/actions/invoices";
 import { useRouter } from "next/navigation";
 import { invoiceSchema } from "@/lib/schemas";
 import { InvoiceFormData } from "@/types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Props {
   currency: string;
@@ -60,6 +70,12 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       items: [],
       tax: 0,
       discount: 0,
+      bankName: "",
+      accountName: "",
+      accountNumber: "",
+      sortCode: "",
+      IBAN: "",
+      swiftBicCode: "",
       notes: "",
     },
   });
@@ -591,15 +607,181 @@ const CreateInvoiceForm = ({ currency }: Props) => {
             </div>
           </div>
 
+          {/* Pay by bank transfer */}
+          <div className="text-lg font-semibold">Pay by bank transfer</div>
+          <div className="flex flex-col md:flex-row justify-between gap-6 mt-6">
+            <div className="space-y-4 w-full md:w-1/2">
+              <FormField
+                control={form.control}
+                name="bankName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Bank name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accountName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Account name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accountNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Account number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="space-y-4 w-full md:w-1/2">
+              <div className="w-full flex">
+                <div className="w-11/12">
+                  <FormField
+                    control={form.control}
+                    name="sortCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Sort Code / Routing Number"
+                            {...field}
+                            className="w-full"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="w-1/12">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" type="button">
+                        <InfoIcon className="size-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[200px] md:max-w-[300px]">
+                      <p>
+                        A number used to identify your bank and branch. Common
+                        in the UK, US, and other countries. Check with your bank
+                        if you're unsure.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              <div className="w-full flex">
+                <div className="w-11/12">
+                  <FormField
+                    control={form.control}
+                    name="IBAN"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="IBAN (International Bank Account Number)"
+                            {...field}
+                            className="w-full"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="w-1/12">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" type="button">
+                        <InfoIcon className="size-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[200px] md:max-w-[300px]">
+                      <p>
+                        A standardized international bank account number used
+                        mainly in Europe, the Middle East, and other regions.
+                        Not all countries use IBANs — leave blank if you don’t
+                        have one.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              <div className="w-full flex">
+                <div className="w-11/12">
+                  <FormField
+                    control={form.control}
+                    name="swiftBicCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="SWIFT / BIC Code"
+                            {...field}
+                            className="w-full"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="w-1/12">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" type="button">
+                        <InfoIcon className="size-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[200px] md:max-w-[300px]">
+                      <p>
+                        A unique code used to identify your bank in
+                        international transfers. Usually 8 or 11 characters. You
+                        can get it from your bank or find it on your bank
+                        statement.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Notes */}
           <FormField
             control={form.control}
             name="notes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Additional Notes</FormLabel>
+                <FormLabel className="mt-6 text-lg font-semibold">
+                  Additional Notes
+                </FormLabel>
                 <FormControl>
-                  <Textarea rows={4} {...field} />
+                  <Textarea
+                    rows={4}
+                    {...field}
+                    placeholder="You can add payment instructions or terms (e.g: warranty, returns policy...) here."
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

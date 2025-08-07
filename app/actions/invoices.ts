@@ -73,6 +73,12 @@ export async function createInvoice(
             amount: item.quantity * item.unitPrice,
           })),
         },
+        bankName: validatedData.data.bankName,
+        accountName: validatedData.data.accountName,
+        accountNumber: validatedData.data.accountNumber,
+        sortCode: validatedData.data.sortCode,
+        iban: validatedData.data.IBAN,
+        swiftBicCode: validatedData.data.swiftBicCode,
       },
       include: {
         items: true,

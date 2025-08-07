@@ -53,6 +53,15 @@ export type InvoiceData = {
   total: number;
   notes?: string | null;
   logoUrl?: string | null;
+
+  // Bank details
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  sortCode?: string | null;
+  iban?: string | null;
+  swiftBicCode?: string | null;
+
   items: Array<{
     description: string;
     quantity: number;
