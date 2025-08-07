@@ -680,7 +680,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                       <p>
                         A number used to identify your bank and branch. Common
                         in the UK, US, and other countries. Check with your bank
-                        if you're unsure.
+                        if you&apos;re unsure.
                       </p>
                     </TooltipContent>
                   </Tooltip>

@@ -114,6 +114,6 @@ async function handleUserDeleted(user: KindeWebhookEvent["data"]["user"]) {
     console.log(`User deleted from database: ${user.email}`);
   } catch (error) {
     // User might not exist in our database
-    console.log(`User not found for deletion: ${user.email}`);
+    console.error("Error deleting user in database:", error);
   }
 }
