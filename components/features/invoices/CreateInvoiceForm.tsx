@@ -731,10 +731,10 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                         />
                       </FormControl>
                       <FormDescription>
-                        Hint - Please enter your bank's specific identifier code
-                        (e.g., the 9-digit ABA Routing Number for the USA, the
-                        6-digit Sort Code for the UK, or the Bank Code / Branch
-                        Name for other regions).
+                        Hint - Please enter your bank&apos;s specific identifier
+                        code (e.g., the 9-digit ABA Routing Number for the USA,
+                        the 6-digit Sort Code for the UK, or the Bank Code /
+                        Branch Name for other regions).
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
