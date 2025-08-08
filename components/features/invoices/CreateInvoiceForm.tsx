@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  CalendarIcon,
-  InfoIcon,
-  Trash2Icon,
-  UploadCloudIcon,
-} from "lucide-react";
+import { CalendarIcon, Trash2Icon, UploadCloudIcon } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -19,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -36,11 +32,6 @@ import { createInvoice } from "@/app/actions/invoices";
 import { useRouter } from "next/navigation";
 import { invoiceSchema } from "@/lib/schemas";
 import { InvoiceFormData } from "@/types";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface Props {
   currency: string;
@@ -64,6 +55,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       clientName: "",
       clientEmail: "",
       clientAddress: "",
+      invoiceNumber: "",
       invoiceDate: new Date(),
       items: [],
       tax: 0,
@@ -71,9 +63,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       bankName: "",
       accountName: "",
       accountNumber: "",
-      sortCode: "",
-      IBAN: "",
-      swiftBicCode: "",
+      bankSortCode: "",
       notes: "",
     },
   });
@@ -190,17 +180,18 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     <div className="max-w-4xl mx-auto p-6 space-y-6 border bg-white shadow rounded-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Top Section: Your Company and Logo */}
-          <div className="flex flex-col md:flex-row justify-between items-start flex-grow gap-6">
+          {/* Top Section: Issuer Details and Logo */}
+          <div className="flex flex-col md:flex-row justify-between items-stretch flex-grow gap-6">
             <div className="space-y-4 w-full md:w-1/2">
-              <h2 className="text-lg font-semibold">Your Company</h2>
+              <h2 className="text-lg font-semibold">Issuer Details</h2>
               <FormField
                 control={form.control}
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Company Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your Name" {...field} />
+                      <Input placeholder="Acme Corporation Ltd." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -211,8 +202,13 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 name="companyEmail"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Company Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Email" type="email" {...field} />
+                      <Input
+                        placeholder="billing@acmecorp.com"
+                        type="email"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,8 +219,12 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 name="companyAddress"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Company Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="Address" {...field} />
+                      <Input
+                        placeholder="123 Innovation Drive, London, UK, W1A 1AA"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -232,7 +232,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               />
             </div>
             <div className="w-full md:w-1/2">
-              <div className="flex h-full justify-center md:justify-end items-center">
+              <div className="flex h-full justify-center items-center">
                 <div className="w-32 h-32 rounded-full border-2 border-dashed border-gray-400 relative overflow-hidden">
                   {logoPreview ? (
                     <div className="relative w-full h-full group">
@@ -288,18 +288,18 @@ const CreateInvoiceForm = ({ currency }: Props) => {
             </div>
           </div>
 
-          {/* Rest of your form remains the same */}
-          {/* Middle Section: Bill To and Invoice Info */}
+          {/* Middle Section: Client Details and Invoice Details */}
           <div className="flex flex-col md:flex-row justify-between gap-6 mt-6">
             <div className="space-y-4 w-full md:w-1/2">
-              <h2 className="text-lg font-semibold">Bill To</h2>
+              <h2 className="text-lg font-semibold">Client Details</h2>
               <FormField
                 control={form.control}
                 name="clientName"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Client Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Client Name" {...field} />
+                      <Input placeholder="Bright Solutions Ltd." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -310,9 +310,10 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 name="clientEmail"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Client Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Client Email"
+                        placeholder="accounts@brightsolutions.com"
                         type="email"
                         {...field}
                       />
@@ -326,8 +327,12 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 name="clientAddress"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Client Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="Client Address" {...field} />
+                      <Input
+                        placeholder="45 Market Street, Manchester, UK, M1 2AB"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -338,9 +343,23 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               <h2 className="text-lg font-semibold">Invoice Details</h2>
               <FormField
                 control={form.control}
+                name="invoiceNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Invoice Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="INV0001" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="invoiceDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
+                    <FormLabel>Issue Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild disabled>
                         <FormControl>
@@ -354,7 +373,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>Invoice date</span>
+                              <span>Pick a date</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -379,6 +398,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
+                    <FormLabel>Due Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -392,7 +412,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>Due date</span>
+                              <span>Pick a date</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -412,12 +432,6 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                   </FormItem>
                 )}
               />
-              <div className="flex gap-2 items-center">
-                <InfoIcon className="text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  Invoice number will be auto-generated.
-                </p>
-              </div>
             </div>
           </div>
 
@@ -447,7 +461,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                       <FormItem className="md:col-span-2">
                         <FormLabel className="md:hidden">Description</FormLabel>
                         <FormControl>
-                          <Input placeholder="Description" {...field} />
+                          <Input placeholder="Item Description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -612,8 +626,8 @@ const CreateInvoiceForm = ({ currency }: Props) => {
             </div>
           </div>
 
-          {/* Pay by bank transfer */}
-          <div className="text-lg font-semibold">Pay by bank transfer</div>
+          {/* Payment Details Section */}
+          <div className="text-lg font-semibold">Payment Details</div>
           <div className="flex flex-col md:flex-row justify-between gap-6 mt-6">
             <div className="space-y-4 w-full md:w-1/2">
               <FormField
@@ -621,8 +635,9 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 name="bankName"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Bank Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Bank name" {...field} />
+                      <Input placeholder="Barclays Bank" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -633,20 +648,9 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 name="accountName"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Account Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Account name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="accountNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Account number" {...field} />
+                      <Input placeholder="Acme Corporation Ltd." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -654,121 +658,42 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               />
             </div>
             <div className="space-y-4 w-full md:w-1/2">
-              <div className="w-full flex">
-                <div className="w-11/12">
-                  <FormField
-                    control={form.control}
-                    name="sortCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Sort Code / Routing Number"
-                            {...field}
-                            className="w-full"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="w-1/12">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" type="button">
-                        <InfoIcon className="size-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-[200px] md:max-w-[300px]">
-                      <p>
-                        A number used to identify your bank and branch. Common
-                        in the UK, US, and other countries. Check with your bank
-                        if you&apos;re unsure.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
-
-              <div className="w-full flex">
-                <div className="w-11/12">
-                  <FormField
-                    control={form.control}
-                    name="IBAN"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="IBAN (International Bank Account Number)"
-                            {...field}
-                            className="w-full"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="w-1/12">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" type="button">
-                        <InfoIcon className="size-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-[200px] md:max-w-[300px]">
-                      <p>
-                        A standardized international bank account number used
-                        mainly in Europe, the Middle East, and other regions.
-                        Not all countries use IBANs — leave blank if you don’t
-                        have one.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
-
-              <div className="w-full flex">
-                <div className="w-11/12">
-                  <FormField
-                    control={form.control}
-                    name="swiftBicCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="SWIFT / BIC Code"
-                            {...field}
-                            className="w-full"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="w-1/12">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" type="button">
-                        <InfoIcon className="size-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-[200px] md:max-w-[300px]">
-                      <p>
-                        A unique code used to identify your bank in
-                        international transfers. Usually 8 or 11 characters. You
-                        can get it from your bank or find it on your bank
-                        statement.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
+              <FormField
+                control={form.control}
+                name="accountNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Account Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="12345678" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bankSortCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bank/Sort Code</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="12-34-56"
+                        {...field}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Hint - Please enter your bank's specific identifier code
+                      (e.g., the 9-digit ABA Routing Number for the USA, the
+                      6-digit Sort Code for the UK, or the Bank Code / Branch
+                      Name for other regions).
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
 
@@ -785,7 +710,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                   <Textarea
                     rows={4}
                     {...field}
-                    placeholder="You can add payment instructions or terms (e.g: warranty, returns policy...) here."
+                    placeholder="Notes - any relevant information not covered, additional terms and conditions."
                   />
                 </FormControl>
                 <FormMessage />
