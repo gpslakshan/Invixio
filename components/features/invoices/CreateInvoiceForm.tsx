@@ -25,7 +25,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn, deleteFromS3, handleLogoUpload } from "@/lib/utils";
+import {
+  cn,
+  deleteFromS3,
+  getCurrencySymbol,
+  handleLogoUpload,
+} from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { createInvoice } from "@/app/actions/invoices";
@@ -109,9 +114,10 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      toast.warning("Please select an image file");
+    // Allowed MIME types
+    const allowedTypes = ["image/png", "image/jpeg"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.warning("Only PNG and JPEG images are allowed.");
       return;
     }
 
@@ -316,7 +322,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                         <span className="text-xs text-center">Upload Logo</span>
                         <input
                           type="file"
-                          accept="image/*"
+                          accept="image/png, image/jpeg"
                           className="hidden"
                           onChange={handleLogoChange}
                           disabled={uploadingLogo}
@@ -611,11 +617,13 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-700">Subtotal</span>
                   <span className="font-medium">
-                    {currency} {subtotal.toFixed(2)}
+                    {getCurrencySymbol(currency)} {subtotal.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">Tax</span>
+                  <span className="text-sm text-gray-700">
+                    Tax ({getCurrencySymbol(currency)})
+                  </span>
                   <FormField
                     control={form.control}
                     name="tax"
@@ -638,7 +646,9 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                   />
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">Discount</span>
+                  <span className="text-sm text-gray-700">
+                    Discount ({getCurrencySymbol(currency)})
+                  </span>
                   <FormField
                     control={form.control}
                     name="discount"
@@ -664,7 +674,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
                   <span>
-                    {currency} {total.toFixed(2)}
+                    {getCurrencySymbol(currency)} {total.toFixed(2)}
                   </span>
                 </div>
                 <hr className="mt-2 border-t-2" />

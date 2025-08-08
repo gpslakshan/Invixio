@@ -85,7 +85,7 @@ export async function createInvoice(
     console.log("Invoice created and saved to DB successfully: ", invoice);
 
     // Generate PDF
-    const pdfBuffer = generateInvoicePDF(invoice);
+    const pdfBuffer = await generateInvoicePDF(invoice);
 
     // Upload PDF to S3
     const s3UploadResult = await uploadPDFToS3(
