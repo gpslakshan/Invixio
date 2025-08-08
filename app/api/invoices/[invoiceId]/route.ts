@@ -60,7 +60,7 @@ export async function GET(
   pdf.setFontSize(12);
   pdf.text(
     [
-      `Invoice No: #INV-2025000001`,
+      `Invoice No: ${invoice.invoiceNumber}`,
       `Issued Date: ${formatDate(invoice.invoiceDate)}`,
       `Due Date: ${formatDate(invoice.dueDate)}`,
     ],

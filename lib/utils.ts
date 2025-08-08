@@ -163,45 +163,6 @@ export const handleLogoUpload = async (file: File) => {
   return fileUrl;
 };
 
-// Generate invoice number in format: #INV-20250001
-export async function generateInvoiceNumber(): Promise<string> {
-  const currentYear = new Date().getFullYear();
-  const prefix = `#INV-${currentYear}`;
-
-  // Get the latest invoice for this year to determine next sequence
-  const latestInvoice = await prisma.invoice.findFirst({
-    where: {
-      invoiceNumber: {
-        startsWith: prefix,
-      },
-    },
-    orderBy: {
-      invoiceNumber: "desc",
-    },
-  });
-
-  let nextSequence = 1;
-  if (latestInvoice) {
-    // Extract sequence number from format: #INV-20250000001
-    const numberPart = latestInvoice.invoiceNumber.replace(`${prefix}`, "");
-    const sequenceNumber = parseInt(numberPart);
-    if (!isNaN(sequenceNumber)) {
-      nextSequence = sequenceNumber + 1;
-    }
-  }
-
-  // Check if we've exceeded 999999 invoices for this year (extremely unlikely)
-  if (nextSequence > 999999) {
-    throw new Error(
-      `Maximum invoices reached for year ${currentYear}. ` +
-        `Consider implementing a more advanced numbering scheme.`
-    );
-  }
-
-  // Format: #INV-YYYY000001 (e.g., #INV-2025000001, #INV-2025000002)
-  return `${prefix}${nextSequence.toString().padStart(6, "0")}`;
-}
-
 export function generateInvoicePDF(invoice: InvoiceData): Buffer<ArrayBuffer> {
   // Generate PDF
   const doc = new jsPDF();

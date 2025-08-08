@@ -58,9 +58,7 @@ export type InvoiceData = {
   bankName: string;
   accountName: string;
   accountNumber: string;
-  sortCode?: string | null;
-  iban?: string | null;
-  swiftBicCode?: string | null;
+  bankSortCode?: string | null;
 
   items: Array<{
     description: string;

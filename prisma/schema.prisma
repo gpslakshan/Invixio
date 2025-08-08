@@ -31,7 +31,7 @@ model User {
 
 model Invoice {
   id             String        @id @default(uuid())
-  invoiceNumber  String        @unique
+  invoiceNumber  String
   companyName    String
   companyEmail   String
   companyAddress String
@@ -50,9 +50,7 @@ model Invoice {
   bankName       String
   accountName    String
   accountNumber  String
-  sortCode       String?
-  iban           String?
-  swiftBicCode   String?
+  bankSortCode   String
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -79,6 +77,7 @@ model InvoiceItem {
 }
 
 enum InvoiceStatus {
+  DRAFT
   PENDING
   PAID
   CANCELLED

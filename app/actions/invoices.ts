@@ -7,7 +7,6 @@ import {
   generateInvoicePDF,
   sendInvoiceEmail,
   uploadPDFToS3,
-  generateInvoiceNumber,
 } from "@/lib/utils";
 import { InvoiceFormData } from "@/types";
 import { revalidatePath } from "next/cache";
@@ -46,13 +45,10 @@ export async function createInvoice(
       (validatedData.data.tax || 0) -
       (validatedData.data.discount || 0);
 
-    // Generate invoice number
-    const invoiceNumber = await generateInvoiceNumber();
-
     // Create invoice in database
     const invoice = await prisma.invoice.create({
       data: {
-        invoiceNumber,
+        invoiceNumber: validatedData.data.invoiceNumber,
         companyName: validatedData.data.companyName,
         companyEmail: validatedData.data.companyEmail,
         companyAddress: validatedData.data.companyAddress,
@@ -79,9 +75,7 @@ export async function createInvoice(
         bankName: validatedData.data.bankName,
         accountName: validatedData.data.accountName,
         accountNumber: validatedData.data.accountNumber,
-        sortCode: validatedData.data.sortCode,
-        iban: validatedData.data.IBAN,
-        swiftBicCode: validatedData.data.swiftBicCode,
+        bankSortCode: validatedData.data.bankSortCode,
       },
       include: {
         items: true,

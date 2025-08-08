@@ -28,6 +28,13 @@ export const invoiceSchema = z.object({
   clientAddress: z.string().min(1, "Client address is required"),
 
   // Invoice details
+  invoiceNumber: z
+    .string()
+    .min(1, "Invoice number is required")
+    .regex(
+      /^[a-zA-Z0-9]+$/,
+      "Invoice number can only contain letters and numbers"
+    ),
   invoiceDate: z.date().refine(
     (date) => {
       const today = getTodayDate();
@@ -67,9 +74,7 @@ export const invoiceSchema = z.object({
   bankName: z.string().min(1, "Bank name is required"),
   accountName: z.string().min(1, "Account name is required"),
   accountNumber: z.string().min(1, "Account number is required"),
-  sortCode: z.string().optional(),
-  IBAN: z.string().optional(),
-  swiftBicCode: z.string().optional(),
+  bankSortCode: z.string().min(1, "Bank/Sort code is required"),
 
   // Additional notes
   notes: z.string().optional(),
