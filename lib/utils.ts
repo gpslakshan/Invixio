@@ -79,7 +79,7 @@ export const formatCurrencyWithSymbol = (
   value: number | string,
   currency: string
 ): string => {
-  return `${getCurrencySymbol(currency)}${formatCurrencyValue(value)}`;
+  return `${getCurrencySymbol(currency)} ${formatCurrencyValue(value)}`;
 };
 
 export async function getUserOnboardingStatus(

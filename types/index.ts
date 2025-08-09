@@ -1,4 +1,5 @@
 import { invoiceSchema } from "@/lib/schemas";
+import { InvoiceStatus } from "@prisma/client";
 import { JSX } from "react";
 import { z } from "zod";
 
@@ -26,12 +27,13 @@ export interface InvoiceStatusItem {
   value: number;
 }
 
-export type Invoice = {
+export type InvoiceDataTableItem = {
   id: string;
-  customer: string;
-  amount: number;
-  status: string; // "pending" | "processing" | "success" | "failed"
-  date: string;
+  invoiceNumber: string;
+  clientName: string;
+  total: number;
+  status: InvoiceStatus;
+  invoiceDate: Date;
 };
 
 export type InvoiceFormData = z.infer<typeof invoiceSchema>;
@@ -53,6 +55,7 @@ export type InvoiceData = {
   total: number;
   notes?: string | null;
   logoUrl?: string | null;
+  status: InvoiceStatus;
 
   // Bank details
   bankName: string;

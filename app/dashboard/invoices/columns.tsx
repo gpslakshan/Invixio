@@ -9,17 +9,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Invoice } from "@/types";
+import {
+  fetchUserCurrency,
+  formatCurrencyWithSymbol,
+  formatDate,
+} from "@/lib/utils";
+import { InvoiceDataTableItem } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 
-export const columns: ColumnDef<Invoice>[] = [
+const currency = await fetchUserCurrency();
+
+export const columns: ColumnDef<InvoiceDataTableItem>[] = [
   {
-    accessorKey: "id",
-    header: "Invoice ID",
+    accessorKey: "invoiceNumber",
+    header: "Invoice No.",
   },
   {
-    accessorKey: "customer",
+    accessorKey: "clientName",
     header: ({ column }) => {
       return (
         <Button
@@ -33,15 +40,11 @@ export const columns: ColumnDef<Invoice>[] = [
     },
   },
   {
-    accessorKey: "amount",
+    accessorKey: "total",
     header: "Amount",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
+      const total = parseFloat(row.getValue("total"));
+      const formatted = formatCurrencyWithSymbol(total, currency);
       return <div className="font-medium">{formatted}</div>;
     },
   },
@@ -50,7 +53,7 @@ export const columns: ColumnDef<Invoice>[] = [
     header: "Status",
   },
   {
-    accessorKey: "date",
+    accessorKey: "invoiceDate",
     header: ({ column }) => {
       return (
         <Button
@@ -61,6 +64,11 @@ export const columns: ColumnDef<Invoice>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const invoiceDate: Date = row.getValue("invoiceDate");
+      const formatted = formatDate(invoiceDate);
+      return <div className="font-medium">{formatted}</div>;
     },
   },
   {
