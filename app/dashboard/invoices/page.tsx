@@ -1,8 +1,7 @@
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
-import { InvoiceDataTableItem } from "@/types";
 import { prisma } from "@/lib/db";
-import { getCurrentUser } from "@/lib/utils";
+import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
+import { InvoiceDataTableItem } from "@/types";
+import { InvoiceTable } from "../../../components/features/invoices/InvoiceTable";
 
 async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
   const invoices = await prisma.invoice.findMany({
@@ -25,6 +24,7 @@ async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
 export default async function InvoicesPage() {
   const user = await getCurrentUser();
   const invoices = await fetchInvoices(user?.id);
+  const currency = await fetchUserCurrency();
 
   return (
     <div className="p-6">
@@ -32,7 +32,7 @@ export default async function InvoicesPage() {
       <p>Manage your Invoices here.</p>
 
       <div className="mt-6">
-        <DataTable columns={columns} data={invoices} />
+        <InvoiceTable invoices={invoices} currency={currency} />
       </div>
     </div>
   );

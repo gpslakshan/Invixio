@@ -10,18 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  fetchUserCurrency,
-  formatCurrencyWithSymbol,
-  formatDate,
-} from "@/lib/utils";
+import { formatCurrencyWithSymbol, formatDate } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
-const currency = await fetchUserCurrency();
-
-export const columns: ColumnDef<InvoiceDataTableItem>[] = [
+export const getColumns = (
+  currency: string
+): ColumnDef<InvoiceDataTableItem>[] => [
   {
     accessorKey: "invoiceNumber",
     header: "Invoice No.",
