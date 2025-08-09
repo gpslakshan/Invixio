@@ -1,6 +1,7 @@
 import { Features } from "@/components/features/marketing/Features";
 import { Hero } from "@/components/features/marketing/Hero";
 import { Pricing } from "@/components/features/marketing/Pricing";
+import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 
 export default async function Home() {
@@ -10,6 +11,7 @@ export default async function Home() {
       <Hero />
       <Features />
       <Pricing />
+      <Footer />
     </main>
   );
 }

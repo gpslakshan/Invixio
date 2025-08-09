@@ -23,7 +23,7 @@ export function MobileSidebarDrawer() {
           <Menu className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left">
+      <SheetContent side="left" className="max-w-[280px]">
         <SheetTitle className="sr-only">menu</SheetTitle>
         <nav className="mt-12">
           <ul className="flex flex-col items-start px-2 lg:px-4 text-sm font-medium">

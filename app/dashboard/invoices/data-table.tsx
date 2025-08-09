@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center justify-between py-4">
+      <div className="flex flex-col-reverse gap-6 md:gap-2 md:flex-row md:items-center md:justify-between py-4">
         <Input
           placeholder="Filter Customers..."
           value={
@@ -77,7 +77,7 @@ export function DataTable<TData, TValue>({
           <PlusIcon /> Create Invoice
         </Link>
       </div>
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden grid grid-cols-1 rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

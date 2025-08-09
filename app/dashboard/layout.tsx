@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import OnboardingAlertDialog from "@/components/features/dashboard/OnboardingAlertDialog";
 import { getCurrentUser, getUserOnboardingStatus } from "@/lib/utils";
+import { Footer } from "@/components/layout/Footer";
 
 export default async function DashboardLayout({
   children,
@@ -23,7 +24,8 @@ export default async function DashboardLayout({
       <Sidebar />
       <div className="flex flex-col">
         <Header />
-        <main className="p-4">{children}</main>
+        <main className="p-4 flex-1">{children}</main>
+        <Footer />
       </div>
     </div>
   );
