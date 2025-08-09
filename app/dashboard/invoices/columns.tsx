@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -51,6 +52,22 @@ export const columns: ColumnDef<InvoiceDataTableItem>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const status: string = row.getValue("status");
+
+      const statusColors: Record<string, string> = {
+        DRAFT: "bg-gray-200 text-gray-800 hover:bg-gray-300",
+        PENDING: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
+        PAID: "bg-green-100 text-green-800 hover:bg-green-200",
+        CANCELLED: "bg-red-100 text-red-800 hover:bg-red-200",
+      };
+
+      return (
+        <Badge className={statusColors[status] || "bg-gray-100 text-gray-800"}>
+          {status}
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "invoiceDate",
