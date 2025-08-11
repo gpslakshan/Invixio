@@ -15,9 +15,7 @@ import { InvoiceDataTableItem } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
-export const getColumns = (
-  currency: string
-): ColumnDef<InvoiceDataTableItem>[] => [
+export const columns: ColumnDef<InvoiceDataTableItem>[] = [
   {
     accessorKey: "invoiceNumber",
     header: "Invoice No.",
@@ -41,6 +39,7 @@ export const getColumns = (
     header: "Amount",
     cell: ({ row }) => {
       const total = parseFloat(row.getValue("total"));
+      const currency = row.getValue("currency") as string;
       const formatted = formatCurrencyWithSymbol(total, currency);
       return <div className="font-medium">{formatted}</div>;
     },

@@ -34,6 +34,7 @@ export type InvoiceDataTableItem = {
   total: number;
   status: InvoiceStatus;
   invoiceDate: Date;
+  currency: string;
 };
 
 export type InvoiceFormData = z.infer<typeof invoiceSchema>;
