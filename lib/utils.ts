@@ -368,10 +368,10 @@ export async function generateInvoicePDF(
   if (invoice.notes) {
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
-    pdf.text("Additional Notes: ", 20, 115 + offset + 100);
+    pdf.text("Additional Notes: ", 20, 115 + offset + 105);
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(12);
-    pdf.text(invoice.notes, 20, 115 + offset + 107, { maxWidth: 170 });
+    pdf.text(invoice.notes, 20, 115 + offset + 112, { maxWidth: 170 });
   }
 
   // Generate PDF as Buffer
