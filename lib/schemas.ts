@@ -21,6 +21,7 @@ export const invoiceSchema = z.object({
   companyName: z.string().min(1, "Company name is required"),
   companyEmail: z.string().email("Please enter a valid email"),
   companyAddress: z.string().min(1, "Company address is required"),
+  currency: z.string().min(1, "Currency is required"),
 
   // Client information
   clientName: z.string().min(1, "Client name is required"),
@@ -69,12 +70,6 @@ export const invoiceSchema = z.object({
   // Financial details
   tax: z.number().min(0, "Tax must be 0 or greater"),
   discount: z.number().min(0, "Discount must be 0 or greater"),
-
-  // Bank details
-  bankName: z.string().min(1, "Bank name is required"),
-  accountName: z.string().min(1, "Account name is required"),
-  accountNumber: z.string().min(1, "Account number is required"),
-  bankSortCode: z.string().min(1, "Bank/Sort code is required"),
 
   // Additional notes
   notes: z.string().optional(),

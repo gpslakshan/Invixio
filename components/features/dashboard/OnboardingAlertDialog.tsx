@@ -12,40 +12,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  Briefcase,
-  Building2,
-  Check,
-  ChevronsUpDown,
-  User2,
-} from "lucide-react";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { currencies } from "@/constants";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Briefcase, Building2, User2 } from "lucide-react";
+import { Form } from "@/components/ui/form";
 import { useState } from "react";
 import { completeOnboardingProcess } from "@/app/actions/onboarding";
 import { toast } from "sonner";
 import { onboardingSchema } from "@/lib/schemas";
+import CurrencyPicker from "@/components/shared/CurrencyPicker";
 
 const businessTypeOptions: {
   label: string;
@@ -131,78 +104,10 @@ const OnboardingAlertDialog = ({ isOpen }: Props) => {
               )}
             </div>
 
-            {/* Currency as a combobox in Shadcn */}
-            <FormField
+            <CurrencyPicker
               control={form.control}
               name="currency"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Preferred currency</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-[200px] justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? `${
-                                currencies.find(
-                                  (currency) => currency.code === field.value
-                                )?.flag
-                              } - ${
-                                currencies.find(
-                                  (currency) => currency.code === field.value
-                                )?.name
-                              }`
-                            : "Select Currency"}
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Search Currency Code..."
-                          className="h-9"
-                        />
-                        <CommandList>
-                          <CommandEmpty>No currency found.</CommandEmpty>
-                          <CommandGroup>
-                            {currencies.map((currency) => (
-                              <CommandItem
-                                value={currency.code}
-                                key={currency.code}
-                                onSelect={() => {
-                                  form.setValue("currency", currency.code);
-                                }}
-                              >
-                                {currency.flag} - {currency.name}
-                                <Check
-                                  className={cn(
-                                    "ml-auto",
-                                    currency.code === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    You can always change this later in settings.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              description="You can always change this later in settings."
             />
 
             <Button type="submit" className="w-full">

@@ -14,7 +14,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -38,6 +37,7 @@ import { useRouter } from "next/navigation";
 import { invoiceSchema } from "@/lib/schemas";
 import { InvoiceFormData } from "@/types";
 import CreateInvoiceActionButtons from "./CreateInvoiceActionButtons";
+import CurrencyPicker from "@/components/shared/CurrencyPicker";
 
 interface Props {
   currency: string;
@@ -75,11 +75,8 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       items: [],
       tax: 0,
       discount: 0,
-      bankName: "",
-      accountName: "",
-      accountNumber: "",
-      bankSortCode: "",
       notes: "",
+      currency,
     },
   });
 
@@ -91,6 +88,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
   const watchedItems = form.watch("items");
   const watchedTax = form.watch("tax");
   const watchedDiscount = form.watch("discount");
+  const watchedCurrency = form.watch("currency");
 
   const subtotal = watchedItems.reduce(
     (acc, item) => acc + (item.quantity || 0) * (item.unitPrice || 0),
@@ -275,6 +273,11 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                <CurrencyPicker
+                  control={form.control}
+                  name="currency"
+                  label="Currency"
                 />
               </div>
               <div className="w-full md:w-1/2">
@@ -488,7 +491,9 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 <div className="hidden md:grid grid-cols-6 gap-2 font-medium text-sm text-gray-600 mb-1">
                   <div className="md:col-span-2">Description</div>
                   <div className="md:col-span-1">Qty</div>
-                  <div className="md:col-span-1">Unit Price</div>
+                  <div className="md:col-span-1">
+                    Unit Price ({getCurrencySymbol(watchedCurrency)})
+                  </div>
                   <div className="md:col-span-1">Amount</div>
                   <div className="md:col-span-1 text-center md:text-left">
                     {" "}
@@ -543,7 +548,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                       render={({ field }) => (
                         <FormItem className="md:col-span-1">
                           <FormLabel className="md:hidden">
-                            Unit Price
+                            Unit Price ({getCurrencySymbol(watchedCurrency)})
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -617,12 +622,12 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-700">Subtotal</span>
                   <span className="font-medium">
-                    {getCurrencySymbol(currency)} {subtotal.toFixed(2)}
+                    {getCurrencySymbol(watchedCurrency)} {subtotal.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-700">
-                    Tax ({getCurrencySymbol(currency)})
+                    Tax ({getCurrencySymbol(watchedCurrency)})
                   </span>
                   <FormField
                     control={form.control}
@@ -647,7 +652,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-700">
-                    Discount ({getCurrencySymbol(currency)})
+                    Discount ({getCurrencySymbol(watchedCurrency)})
                   </span>
                   <FormField
                     control={form.control}
@@ -674,82 +679,11 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
                   <span>
-                    {getCurrencySymbol(currency)} {total.toFixed(2)}
+                    {getCurrencySymbol(watchedCurrency)} {total.toFixed(2)}
                   </span>
                 </div>
                 <hr className="mt-2 border-t-2" />
                 <hr className="border-t-2" />
-              </div>
-            </div>
-
-            {/* Payment Details Section */}
-            <div className="text-lg font-semibold">Payment Details</div>
-            <div className="flex flex-col md:flex-row justify-between gap-6 mt-6">
-              <div className="space-y-4 w-full md:w-1/2">
-                <FormField
-                  control={form.control}
-                  name="bankName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bank Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Barclays Bank" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="accountName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Acme Corporation Ltd." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="space-y-4 w-full md:w-1/2">
-                <FormField
-                  control={form.control}
-                  name="accountNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="12345678" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="bankSortCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bank/Sort Code</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="12-34-56"
-                          {...field}
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Hint - Please enter your bank&apos;s specific identifier
-                        code (e.g., the 9-digit ABA Routing Number for the USA,
-                        the 6-digit Sort Code for the UK, or the Bank Code /
-                        Branch Name for other regions).
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </div>
 
@@ -766,7 +700,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                     <Textarea
                       rows={4}
                       {...field}
-                      placeholder="Notes - any relevant information not covered, additional terms and conditions."
+                      placeholder="Notes - any relevant information not covered. Ex: payment methods, additional terms and conditions."
                     />
                   </FormControl>
                   <FormMessage />

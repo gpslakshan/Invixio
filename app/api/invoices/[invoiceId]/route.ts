@@ -192,36 +192,13 @@ export async function GET(
   pdf.setFont("helvetica", "normal");
   pdf.line(130, 115 + offset + 34, 190, 115 + offset + 34);
 
-  // Payment Details
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(16);
-  pdf.text("Payment Details", 20, 115 + offset + 50);
-  pdf.setFontSize(12);
-  // Individual lines with bold labels and normal values
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Account Holder Name:", 20, 115 + offset + 58);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(invoice.accountName, 80, 115 + offset + 58);
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Bank Name:", 20, 115 + offset + 64);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(invoice.bankName, 80, 115 + offset + 64);
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Account Number:", 20, 115 + offset + 70);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(invoice.accountNumber, 80, 115 + offset + 70);
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Bank/Sort Code:", 20, 115 + offset + 76);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(invoice.bankSortCode, 80, 115 + offset + 76);
-
   if (invoice.notes) {
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
-    pdf.text("Additional Notes: ", 20, 115 + offset + 90);
+    pdf.text("Additional Notes: ", 20, 115 + offset + 60);
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(12);
-    pdf.text(invoice.notes, 20, 115 + offset + 97);
+    pdf.text(invoice.notes, 20, 115 + offset + 67);
   }
 
   // Generate PDF as Buffer

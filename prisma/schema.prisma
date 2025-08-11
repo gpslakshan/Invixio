@@ -47,10 +47,7 @@ model Invoice {
   notes          String?
   logoUrl        String?
   status         InvoiceStatus @default(PENDING)
-  bankName       String
-  accountName    String
-  accountNumber  String
-  bankSortCode   String
+  currency       String
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 

@@ -56,12 +56,7 @@ export type InvoiceData = {
   notes?: string | null;
   logoUrl?: string | null;
   status: InvoiceStatus;
-
-  // Bank details
-  bankName: string;
-  accountName: string;
-  accountNumber: string;
-  bankSortCode?: string | null;
+  currency: string;
 
   items: Array<{
     description: string;

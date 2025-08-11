@@ -72,10 +72,7 @@ export async function createInvoice(
             amount: item.quantity * item.unitPrice,
           })),
         },
-        bankName: validatedData.data.bankName,
-        accountName: validatedData.data.accountName,
-        accountNumber: validatedData.data.accountNumber,
-        bankSortCode: validatedData.data.bankSortCode,
+        currency: validatedData.data.currency,
       },
       include: {
         items: true,
@@ -107,10 +104,14 @@ export async function createInvoice(
     const emailResult = await sendInvoiceEmail(invoice, s3UploadResult.url!);
 
     if (!emailResult.success) {
-      console.error("Failed to send invoice email:", emailResult.error);
+      console.error(
+        "Invoice created successfully but failed to send invoice email:",
+        emailResult.error
+      );
       return {
-        status: "error",
-        message: "Something went wrong. Please try again.",
+        status: "warning",
+        message:
+          "Invoice created successfully, but the email failed to send. Check the customer's email address and resend the invoice from the 'Actions' menu. If the problem continues, please contact support.",
       };
     }
 
