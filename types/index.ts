@@ -1,4 +1,4 @@
-import { invoiceSchema } from "@/lib/schemas";
+import { invoiceSchema, onboardingSchema } from "@/lib/schemas";
 import { InvoiceStatus } from "@prisma/client";
 import { JSX } from "react";
 import { z } from "zod";
@@ -26,6 +26,8 @@ export interface InvoiceStatusItem {
   name: "Paid" | "Unpaid" | "Overdue" | "Canceled";
   value: number;
 }
+
+export type OnboardingFormData = z.infer<typeof onboardingSchema>;
 
 export type InvoiceDataTableItem = {
   id: string;

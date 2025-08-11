@@ -25,22 +25,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Control, FieldValues, Path } from "react-hook-form";
 
-interface Props {
-  control: any; // You might want to type this more specifically
-  name: string;
+interface Props<T extends FieldValues> {
+  control: Control<T>;
+  name: Path<T>;
   label?: string;
   description?: string;
   className?: string;
 }
 
-const CurrencyPicker = ({
+const CurrencyPicker = <T extends FieldValues>({
   control,
   name,
   label = "Preferred currency",
   description,
   className,
-}: Props) => {
+}: Props<T>) => {
   return (
     <FormField
       control={control}

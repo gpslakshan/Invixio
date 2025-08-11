@@ -121,7 +121,7 @@ export async function createInvoice(
 
     return {
       status: "success",
-      message: "Invoice created and sent successfully.",
+      message: "Invoice created and email sent successfully",
     };
   } catch (error) {
     console.error("Error creating invoice:", error);

@@ -198,8 +198,11 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       const result = await createInvoice(data, logoUrl);
       if (result.status === "error") {
         toast.error(result.message);
+      } else if (result.status === "warning") {
+        toast.success(result.message);
+        router.push("/dashboard/invoices");
       } else {
-        toast.success("Invoice created and email sent successfully");
+        toast.success(result.message);
         router.push("/dashboard/invoices");
       }
     } catch (error) {
@@ -274,7 +277,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                     </FormItem>
                   )}
                 />
-                <CurrencyPicker
+                <CurrencyPicker<InvoiceFormData>
                   control={form.control}
                   name="currency"
                   label="Currency"

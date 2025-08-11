@@ -1,24 +1,25 @@
 "use client";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Briefcase, Building2, User2 } from "lucide-react";
+import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Briefcase, Building2, User2 } from "lucide-react";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
 import { completeOnboardingProcess } from "@/app/actions/onboarding";
-import { toast } from "sonner";
 import { onboardingSchema } from "@/lib/schemas";
 import CurrencyPicker from "@/components/shared/CurrencyPicker";
+import { OnboardingFormData } from "@/types";
 
 const businessTypeOptions: {
   label: string;
@@ -48,13 +49,13 @@ interface Props {
 
 const OnboardingAlertDialog = ({ isOpen }: Props) => {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(isOpen);
-  const form = useForm<z.infer<typeof onboardingSchema>>({
+  const form = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
   });
 
   const selectedBusinessType = form.watch("businessType");
 
-  const onSubmit = async (data: z.infer<typeof onboardingSchema>) => {
+  const onSubmit = async (data: OnboardingFormData) => {
     const result = await completeOnboardingProcess(data);
     if (result.status === "error") {
       toast.error(result.message);
@@ -104,7 +105,7 @@ const OnboardingAlertDialog = ({ isOpen }: Props) => {
               )}
             </div>
 
-            <CurrencyPicker
+            <CurrencyPicker<OnboardingFormData>
               control={form.control}
               name="currency"
               description="You can always change this later in settings."
