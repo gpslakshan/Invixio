@@ -69,9 +69,10 @@ const OnboardingAlertDialog = ({ isOpen }: Props) => {
   return (
     <AlertDialog open={isAlertDialogOpen}>
       <AlertDialogContent>
-        <AlertDialogTitle>👋 Welcome! Let’s get to know you</AlertDialogTitle>
-        <AlertDialogDescription className="mb-4">
-          This helps us tailor your invoicing experience.
+        <AlertDialogTitle>👋 You&apos;re Almost There!</AlertDialogTitle>
+        <AlertDialogDescription className="mb-2">
+          Just a few more steps to complete your setup. This helps us tailor
+          your invoicing experience.
         </AlertDialogDescription>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -108,10 +109,10 @@ const OnboardingAlertDialog = ({ isOpen }: Props) => {
             <CurrencyPicker<OnboardingFormData>
               control={form.control}
               name="currency"
-              description="You can always change this later in settings."
+              description="This currency will be used for all invoices and reports. ⚠️ You won't be able to change it later."
             />
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full mt-4">
               Continue
             </Button>
           </form>

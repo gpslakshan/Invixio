@@ -30,26 +30,26 @@ model User {
 }
 
 model Invoice {
-  id             String        @id @default(uuid())
-  invoiceNumber  String
-  companyName    String
-  companyEmail   String
-  companyAddress String
-  clientName     String
-  clientEmail    String
-  clientAddress  String
-  invoiceDate    DateTime
-  dueDate        DateTime
-  subtotal       Float
-  tax            Float
-  discount       Float
-  total          Float
-  notes          String?
-  logoUrl        String?
-  status         InvoiceStatus @default(PENDING)
-  currency       String
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id                  String        @id @default(uuid())
+  invoiceNumber       String
+  companyName         String
+  companyEmail        String
+  companyAddress      String
+  clientName          String
+  clientEmail         String
+  clientAddress       String
+  invoiceDate         DateTime
+  dueDate             DateTime
+  subtotal            Float
+  tax                 Float
+  discount            Float
+  total               Float
+  notes               String?
+  logoUrl             String?
+  status              InvoiceStatus @default(PENDING)
+  paymentInstructions String
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 
   userId String
   user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -62,7 +62,7 @@ model InvoiceItem {
   id          String   @id @default(uuid())
   description String
   quantity    Int
-  unitPrice   Float
+  rate        Float
   amount      Float
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -36,7 +36,7 @@ export async function createInvoice(
 
     // Calculate amounts
     const subtotal = validatedData.data.items.reduce(
-      (acc, item) => acc + (item.quantity || 0) * (item.unitPrice || 0),
+      (acc, item) => acc + (item.quantity || 0) * (item.rate || 0),
       0
     );
 
@@ -68,11 +68,11 @@ export async function createInvoice(
           create: validatedData.data.items.map((item) => ({
             description: item.description,
             quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            amount: item.quantity * item.unitPrice,
+            rate: item.rate,
+            amount: item.quantity * item.rate,
           })),
         },
-        currency: validatedData.data.currency,
+        paymentInstructions: validatedData.data.paymentInstructions,
       },
       include: {
         items: true,

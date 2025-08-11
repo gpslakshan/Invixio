@@ -62,7 +62,7 @@ export const invoiceSchema = z.object({
       z.object({
         description: z.string().min(1, "Description is required"),
         quantity: z.number().min(1, "Quantity must be at least 1"),
-        unitPrice: z.number().min(0, "Unit price must be 0 or greater"),
+        rate: z.number().min(0, "Unit price must be 0 or greater"),
       })
     )
     .min(1, "At least one item is required"),
@@ -71,6 +71,14 @@ export const invoiceSchema = z.object({
   tax: z.number().min(0, "Tax must be 0 or greater"),
   discount: z.number().min(0, "Discount must be 0 or greater"),
 
+  paymentInstructions: z
+    .string()
+    .min(1, "Payment instructions are required")
+    .max(500, "Payment instructions can be maximum of 500 characters"),
+
   // Additional notes
-  notes: z.string().optional(),
+  notes: z
+    .string()
+    .max(500, "Notes can be maximum of 500 characters")
+    .optional(),
 });

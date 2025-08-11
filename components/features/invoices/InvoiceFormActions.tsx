@@ -14,7 +14,7 @@ interface Props {
   isSticky: boolean;
 }
 
-const CreateInvoiceActionButtons = ({
+const InvoiceFormActions = ({
   onPreview,
   onDownloadPDF,
   onSendEmail,
@@ -64,4 +64,4 @@ const CreateInvoiceActionButtons = ({
   );
 };
 
-export default CreateInvoiceActionButtons;
+export default InvoiceFormActions;

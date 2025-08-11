@@ -36,7 +36,6 @@ export type InvoiceDataTableItem = {
   total: number;
   status: InvoiceStatus;
   invoiceDate: Date;
-  currency: string;
 };
 
 export type InvoiceFormData = z.infer<typeof invoiceSchema>;
@@ -59,12 +58,12 @@ export type InvoiceData = {
   notes?: string | null;
   logoUrl?: string | null;
   status: InvoiceStatus;
-  currency: string;
+  paymentInstructions: string;
 
   items: Array<{
     description: string;
     quantity: number;
-    unitPrice: number;
+    rate: number;
     amount: number;
   }>;
 };

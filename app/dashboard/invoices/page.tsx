@@ -1,10 +1,9 @@
 import { prisma } from "@/lib/db";
-import { getCurrentUser } from "@/lib/utils";
+import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import InvoiceTable from "@/components/features/invoices/InvoiceTable";
 
 async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
   const invoices = await prisma.invoice.findMany({
@@ -18,7 +17,6 @@ async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
       total: true,
       status: true,
       invoiceDate: true,
-      currency: true,
     },
   });
 
@@ -32,19 +30,20 @@ export default function InvoicesPage() {
       <p>Manage your Invoices here.</p>
 
       <Suspense fallback={<LoadingSpinner />}>
-        <InvoiceTable />
+        <InvoicesGrid />
       </Suspense>
     </div>
   );
 }
 
-async function InvoiceTable() {
+async function InvoicesGrid() {
   const user = await getCurrentUser();
   const invoices = await fetchInvoices(user?.id);
+  const currency = await fetchUserCurrency();
 
   return (
     <div className="mt-6">
-      <DataTable columns={columns} data={invoices} />
+      <InvoiceTable currency={currency} invoices={invoices} />
     </div>
   );
 }

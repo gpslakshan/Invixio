@@ -37,8 +37,7 @@ import { createInvoice } from "@/app/actions/invoices";
 import { useRouter } from "next/navigation";
 import { invoiceSchema } from "@/lib/schemas";
 import { InvoiceData, InvoiceFormData } from "@/types";
-import CreateInvoiceActionButtons from "./CreateInvoiceActionButtons";
-import CurrencyPicker from "@/components/shared/CurrencyPicker";
+import InvoiceFormActions from "./InvoiceFormActions";
 
 interface Props {
   currency: string;
@@ -77,6 +76,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       items: [],
       tax: 0,
       discount: 0,
+      paymentInstructions: "",
       notes: "",
       currency,
     },
@@ -90,10 +90,9 @@ const CreateInvoiceForm = ({ currency }: Props) => {
   const watchedItems = form.watch("items");
   const watchedTax = form.watch("tax");
   const watchedDiscount = form.watch("discount");
-  const watchedCurrency = form.watch("currency");
 
   const subtotal = watchedItems.reduce(
-    (acc, item) => acc + (item.quantity || 0) * (item.unitPrice || 0),
+    (acc, item) => acc + (item.quantity || 0) * (item.rate || 0),
     0
   );
   const total = subtotal + (watchedTax || 0) - (watchedDiscount || 0);
@@ -102,7 +101,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     append({
       description: "",
       quantity: 1,
-      unitPrice: 0,
+      rate: 0,
     });
   };
 
@@ -214,10 +213,10 @@ const CreateInvoiceForm = ({ currency }: Props) => {
         items: data.items.map((item) => ({
           description: item.description,
           quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          amount: item.quantity * item.unitPrice,
+          rate: item.rate,
+          amount: item.quantity * item.rate,
         })),
-        currency: data.currency,
+        paymentInstructions: data.paymentInstructions,
       };
 
       const pdfBuffer = await generateInvoicePDF(invoiceData);
@@ -281,7 +280,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <CreateInvoiceActionButtons
+      <InvoiceFormActions
         isUploadingLogo={uploadingLogo}
         isDeletingLogo={deletingLogo}
         isSubmittingForm={submittingForm}
@@ -336,18 +335,13 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                       <FormLabel>Company Address</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="123 Innovation Drive, London, UK, W1A 1AA"
+                          placeholder="123 Innovation Street, Metropolis, NY 10001"
                           {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-                <CurrencyPicker<InvoiceFormData>
-                  control={form.control}
-                  name="currency"
-                  label="Currency"
                 />
               </div>
               <div className="w-full md:w-1/2">
@@ -449,7 +443,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                       <FormLabel>Client Address</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="45 Market Street, Manchester, UK, M1 2AB"
+                          placeholder="45 Oak Avenue, Springfield, IL 62701"
                           {...field}
                         />
                       </FormControl>
@@ -562,7 +556,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                   <div className="md:col-span-2">Description</div>
                   <div className="md:col-span-1">Qty</div>
                   <div className="md:col-span-1">
-                    Unit Price ({getCurrencySymbol(watchedCurrency)})
+                    Rate ({getCurrencySymbol(currency)})
                   </div>
                   <div className="md:col-span-1">Amount</div>
                   <div className="md:col-span-1 text-center md:text-left">
@@ -614,17 +608,17 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                     />
                     <FormField
                       control={form.control}
-                      name={`items.${index}.unitPrice`}
+                      name={`items.${index}.rate`}
                       render={({ field }) => (
                         <FormItem className="md:col-span-1">
                           <FormLabel className="md:hidden">
-                            Unit Price ({getCurrencySymbol(watchedCurrency)})
+                            Rate ({getCurrencySymbol(currency)})
                           </FormLabel>
                           <FormControl>
                             <Input
                               type="number"
                               step="0.01"
-                              placeholder="Unit price"
+                              placeholder="Rate"
                               {...field}
                               onChange={(e) =>
                                 field.onChange(Number(e.target.value))
@@ -641,7 +635,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                         type="number"
                         value={(
                           (watchedItems[index]?.quantity || 0) *
-                          (watchedItems[index]?.unitPrice || 0)
+                          (watchedItems[index]?.rate || 0)
                         ).toFixed(2)}
                         disabled
                       />
@@ -692,12 +686,12 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-700">Subtotal</span>
                   <span className="font-medium">
-                    {getCurrencySymbol(watchedCurrency)} {subtotal.toFixed(2)}
+                    {getCurrencySymbol(currency)} {subtotal.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-700">
-                    Tax ({getCurrencySymbol(watchedCurrency)})
+                    Tax ({getCurrencySymbol(currency)})
                   </span>
                   <FormField
                     control={form.control}
@@ -722,7 +716,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-700">
-                    Discount ({getCurrencySymbol(watchedCurrency)})
+                    Discount ({getCurrencySymbol(currency)})
                   </span>
                   <FormField
                     control={form.control}
@@ -749,7 +743,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
                   <span>
-                    {getCurrencySymbol(watchedCurrency)} {total.toFixed(2)}
+                    {getCurrencySymbol(currency)} {total.toFixed(2)}
                   </span>
                 </div>
                 <hr className="mt-2 border-t-2" />
@@ -757,20 +751,46 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               </div>
             </div>
 
+            {/* Payment Instructions */}
+            <FormField
+              control={form.control}
+              name="paymentInstructions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="mt-6 text-lg font-semibold">
+                    Payment Instructions:
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={4}
+                      {...field}
+                      placeholder={`Ex: Please make checks payable to Acme Corportation Ltd. or pay via bank transfer:
+Bank Name: Cityville Bank
+Account Name: Acme Corportation Ltd.
+Account No: 123456789
+Routing No: 987654321
+Payment is due within 14 days of the invoice date.`}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Notes */}
             <FormField
               control={form.control}
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="mt-6 text-lg font-semibold">
-                    Additional Notes
+                  <FormLabel className="mt-2 text-lg font-semibold">
+                    Notes
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       rows={4}
                       {...field}
-                      placeholder="Notes - any relevant information not covered. Ex: payment methods, additional terms and conditions."
+                      placeholder="Ex: Thank you for your business! For any questions, please contact us at billing@acmecorp.com."
                     />
                   </FormControl>
                   <FormMessage />

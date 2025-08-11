@@ -284,8 +284,8 @@ export async function generateInvoicePDF(
   // Invoice Items Header
   pdf.setFont("helvetica", "bold");
   pdf.text("Description", 20, 105);
-  pdf.text("Quantity", 100, 105, { align: "center" });
-  pdf.text("Unit Price", 155, 105, { align: "right" });
+  pdf.text("Quantity", 120, 105, { align: "center" });
+  pdf.text("Rate", 155, 105, { align: "right" });
   pdf.text("Amount", 190, 105, { align: "right" });
   // draw header line
   pdf.line(20, 107, 190, 107);
@@ -295,11 +295,11 @@ export async function generateInvoicePDF(
   let offset = 0;
   for (let i = 0; i < invoice.items.length; i++) {
     pdf.text(invoice.items[i].description, 20, 115 + offset);
-    pdf.text(invoice.items[i].quantity.toString(), 100, 115 + offset, {
+    pdf.text(invoice.items[i].quantity.toString(), 120, 115 + offset, {
       align: "center",
     });
     pdf.text(
-      formatCurrencyWithSymbol(invoice.items[i].unitPrice, currency),
+      formatCurrencyWithSymbol(invoice.items[i].rate, currency),
       155,
       115 + offset,
       { align: "right" }
@@ -356,13 +356,22 @@ export async function generateInvoicePDF(
   pdf.setFont("helvetica", "normal");
   pdf.line(130, 115 + offset + 34, 190, 115 + offset + 34);
 
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(16);
+  pdf.text("Payment Instructions: ", 20, 115 + offset + 60);
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(12);
+  pdf.text(invoice.paymentInstructions, 20, 115 + offset + 67, {
+    maxWidth: 170,
+  });
+
   if (invoice.notes) {
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
-    pdf.text("Additional Notes: ", 20, 115 + offset + 60);
+    pdf.text("Additional Notes: ", 20, 115 + offset + 100);
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(12);
-    pdf.text(invoice.notes, 20, 115 + offset + 67);
+    pdf.text(invoice.notes, 20, 115 + offset + 107, { maxWidth: 170 });
   }
 
   // Generate PDF as Buffer
