@@ -385,7 +385,7 @@ export async function uploadPDFToS3(
       Key: s3Key,
       Body: pdfBuffer,
       ContentType: "application/pdf",
-      ContentDisposition: `attachment; filename="${fileName}"`,
+      ContentDisposition: `inline; filename="${fileName}"`,
     });
 
     await s3Client.send(uploadCommand);

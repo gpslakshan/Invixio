@@ -27,6 +27,7 @@ import {
 import {
   cn,
   deleteFromS3,
+  generateInvoicePDF,
   getCurrencySymbol,
   handleLogoUpload,
 } from "@/lib/utils";
@@ -35,7 +36,7 @@ import { toast } from "sonner";
 import { createInvoice } from "@/app/actions/invoices";
 import { useRouter } from "next/navigation";
 import { invoiceSchema } from "@/lib/schemas";
-import { InvoiceFormData } from "@/types";
+import { InvoiceData, InvoiceFormData } from "@/types";
 import CreateInvoiceActionButtons from "./CreateInvoiceActionButtons";
 import CurrencyPicker from "@/components/shared/CurrencyPicker";
 
@@ -50,6 +51,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [deletingLogo, setDeletingLogo] = useState(false);
   const [submittingForm, setSubmittingForm] = useState(false);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
   const [sticky, setSticky] = useState(false);
   const router = useRouter();
 
@@ -178,9 +180,73 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     console.log("Preview clicked");
   };
 
-  const handleDownloadPDF = () => {
-    // Implement PDF download functionality
-    console.log("Download PDF clicked");
+  const handleDownloadPDF = async () => {
+    // Validate form before submitting
+    const isValid = await form.trigger();
+    if (!isValid) {
+      toast.error("Please fix form errors before downloading");
+      return;
+    }
+
+    const data = form.getValues();
+
+    setDownloadingPDF(true);
+
+    try {
+      const invoiceData: InvoiceData = {
+        id: `INV${Date.now().toString()}`,
+        status: "DRAFT",
+        invoiceNumber: data.invoiceNumber,
+        companyName: data.companyName,
+        companyEmail: data.companyEmail,
+        companyAddress: data.companyAddress,
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        clientAddress: data.clientAddress,
+        invoiceDate: data.invoiceDate,
+        dueDate: data.dueDate,
+        subtotal,
+        tax: data.tax || 0,
+        discount: data.discount || 0,
+        total,
+        notes: data.notes,
+        logoUrl: logoUrl,
+        items: data.items.map((item) => ({
+          description: item.description,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          amount: item.quantity * item.unitPrice,
+        })),
+        currency: data.currency,
+      };
+
+      const pdfBuffer = await generateInvoicePDF(invoiceData);
+      const filename = "invoice.pdf";
+
+      // Create a Blob from the ArrayBuffer buffer
+      const blob = new Blob([pdfBuffer], { type: "application/pdf" });
+
+      // Create an object URL for the Blob
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary link element
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+
+      // Append the link to the document and trigger a click
+      document.body.appendChild(a);
+      a.click();
+
+      // Remove the link and revoke the URL
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error("Failed to download invoice PDF");
+      console.error(error);
+    } finally {
+      setDownloadingPDF(false);
+    }
   };
 
   const handleSendEmail = async () => {
@@ -219,6 +285,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
         isUploadingLogo={uploadingLogo}
         isDeletingLogo={deletingLogo}
         isSubmittingForm={submittingForm}
+        isDownloadingPDF={downloadingPDF}
         onPreview={handlePreview}
         onDownloadPDF={handleDownloadPDF}
         onSendEmail={handleSendEmail}

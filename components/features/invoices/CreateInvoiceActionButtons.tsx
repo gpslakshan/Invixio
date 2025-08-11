@@ -10,6 +10,7 @@ interface Props {
   isUploadingLogo: boolean;
   isDeletingLogo: boolean;
   isSubmittingForm: boolean;
+  isDownloadingPDF: boolean;
   isSticky: boolean;
 }
 
@@ -20,6 +21,7 @@ const CreateInvoiceActionButtons = ({
   isUploadingLogo,
   isDeletingLogo,
   isSubmittingForm,
+  isDownloadingPDF,
   isSticky,
 }: Props) => {
   return (
@@ -33,8 +35,14 @@ const CreateInvoiceActionButtons = ({
         <EyeIcon /> Preview
       </Button>
       <div className="flex flex-col md:flex-row gap-3">
-        <Button variant="secondary" size="sm" onClick={onDownloadPDF}>
-          <DownloadIcon /> Download PDF
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onDownloadPDF}
+          disabled={isDownloadingPDF}
+        >
+          <DownloadIcon />{" "}
+          {isDownloadingPDF ? "Downloading..." : "Download PDF"}
         </Button>
         <Button
           size="sm"

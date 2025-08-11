@@ -50,6 +50,11 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      columnVisibility: {
+        currency: false,
+      },
+    },
     state: {
       sorting,
       columnFilters,

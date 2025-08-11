@@ -35,11 +35,15 @@ export const columns: ColumnDef<InvoiceDataTableItem>[] = [
     },
   },
   {
+    accessorKey: "currency",
+    header: "Currency",
+  },
+  {
     accessorKey: "total",
     header: "Amount",
     cell: ({ row }) => {
       const total = parseFloat(row.getValue("total"));
-      const currency = row.getValue("currency") as string;
+      const currency: string = row.getValue("currency");
       const formatted = formatCurrencyWithSymbol(total, currency);
       return <div className="font-medium">{formatted}</div>;
     },

@@ -3,6 +3,8 @@ import { getCurrentUser } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { Suspense } from "react";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
   const invoices = await prisma.invoice.findMany({
@@ -23,18 +25,26 @@ async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
   return invoices;
 }
 
-export default async function InvoicesPage() {
-  const user = await getCurrentUser();
-  const invoices = await fetchInvoices(user?.id);
-
+export default function InvoicesPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Invoices</h1>
       <p>Manage your Invoices here.</p>
 
-      <div className="mt-6">
-        <DataTable columns={columns} data={invoices} />
-      </div>
+      <Suspense fallback={<LoadingSpinner />}>
+        <InvoiceTable />
+      </Suspense>
+    </div>
+  );
+}
+
+async function InvoiceTable() {
+  const user = await getCurrentUser();
+  const invoices = await fetchInvoices(user?.id);
+
+  return (
+    <div className="mt-6">
+      <DataTable columns={columns} data={invoices} />
     </div>
   );
 }
