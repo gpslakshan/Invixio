@@ -51,6 +51,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
   const [deletingLogo, setDeletingLogo] = useState(false);
   const [submittingForm, setSubmittingForm] = useState(false);
   const [downloadingPDF, setDownloadingPDF] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [sticky, setSticky] = useState(false);
   const router = useRouter();
 
@@ -264,11 +265,13 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       if (result.status === "error") {
         toast.error(result.message);
       } else if (result.status === "warning") {
-        toast.success(result.message);
-        router.push("/dashboard/invoices");
+        toast.warning(result.message, { duration: 7000 });
+        setIsNavigating(true); // Show navigation loading
+        router.push("/dashboard/invoices"); // // router.push() is non-blocking - it initiates navigation but doesn't wait. The finally block executes immediately: setSubmittingForm(false)
       } else {
-        toast.success(result.message);
-        router.push("/dashboard/invoices");
+        toast.success(result.message, { duration: 7000 });
+        setIsNavigating(true); // Show navigation loading
+        router.push("/dashboard/invoices"); // router.push() is non-blocking - it initiates navigation but doesn't wait. The finally block executes immediately: setSubmittingForm(false)
       }
     } catch (error) {
       toast.error("Failed to send invoice");
@@ -283,7 +286,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       <InvoiceFormActions
         isUploadingLogo={uploadingLogo}
         isDeletingLogo={deletingLogo}
-        isSubmittingForm={submittingForm}
+        isSubmittingForm={submittingForm || isNavigating} // Disabled during both
         isDownloadingPDF={downloadingPDF}
         onPreview={handlePreview}
         onDownloadPDF={handleDownloadPDF}
