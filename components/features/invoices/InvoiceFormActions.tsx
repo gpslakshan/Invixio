@@ -11,6 +11,7 @@ interface Props {
   isDeletingLogo: boolean;
   isSubmittingForm: boolean;
   isDownloadingPDF: boolean;
+  isGeneratingPreview: boolean;
   isSticky: boolean;
 }
 
@@ -22,6 +23,7 @@ const InvoiceFormActions = ({
   isDeletingLogo,
   isSubmittingForm,
   isDownloadingPDF,
+  isGeneratingPreview,
   isSticky,
 }: Props) => {
   return (
@@ -31,8 +33,13 @@ const InvoiceFormActions = ({
         isSticky ? "shadow-md" : ""
       )}
     >
-      <Button variant="secondary" size="sm" onClick={onPreview}>
-        <EyeIcon /> Preview
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={onPreview}
+        disabled={isGeneratingPreview}
+      >
+        <EyeIcon /> {isGeneratingPreview ? "Generating..." : "Preview"}
       </Button>
       <div className="flex flex-col md:flex-row gap-3">
         <Button

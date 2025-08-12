@@ -38,19 +38,22 @@ import { useRouter } from "next/navigation";
 import { invoiceSchema } from "@/lib/schemas";
 import { InvoiceData, InvoiceFormData } from "@/types";
 import InvoiceFormActions from "./InvoiceFormActions";
+import InvoicePreview from "./InvoicePreview";
 
 interface Props {
   currency: string;
 }
 
 const CreateInvoiceForm = ({ currency }: Props) => {
-  const [logo, setLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null); // S3 URL after upload
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [deletingLogo, setDeletingLogo] = useState(false);
   const [submittingForm, setSubmittingForm] = useState(false);
   const [downloadingPDF, setDownloadingPDF] = useState(false);
+  const [generatingPreview, setGeneratingPreview] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
   const [sticky, setSticky] = useState(false);
   const router = useRouter();
@@ -127,7 +130,6 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       return;
     }
 
-    setLogo(file);
     setLogoPreview(URL.createObjectURL(file));
 
     // Start upload process
@@ -140,9 +142,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     } catch (error) {
       console.error("Error uploading logo:", error);
       toast.error("Failed to upload logo. Please try again.");
-      // Reset on error
-      setLogo(null);
-      setLogoPreview(null);
+      setLogoPreview(null); // Reset on error
     } finally {
       setUploadingLogo(false);
     }
@@ -163,7 +163,6 @@ const CreateInvoiceForm = ({ currency }: Props) => {
       }
 
       // Reset states
-      setLogo(null);
       setLogoPreview(null);
       setLogoUrl(null);
     } catch (error) {
@@ -175,9 +174,78 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     }
   };
 
-  const handlePreview = () => {
-    // Implement preview functionality
-    console.log("Preview clicked");
+  const handlePreview = async () => {
+    const data = form.getValues();
+
+    setGeneratingPreview(true);
+
+    try {
+      const invoiceData: InvoiceData = {
+        id: `INV${Date.now().toString()}`,
+        status: "DRAFT",
+        invoiceNumber: data.invoiceNumber || "INV-DRAFT",
+        companyName: data.companyName || "Your Company",
+        companyEmail: data.companyEmail || "your-email@company.com",
+        companyAddress: data.companyAddress || "Your Company Address",
+        clientName: data.clientName || "Client Name",
+        clientEmail: data.clientEmail || "client@email.com",
+        clientAddress: data.clientAddress || "Client Address",
+        invoiceDate: data.invoiceDate || new Date(),
+        dueDate: data.dueDate || new Date(),
+        subtotal,
+        tax: data.tax || 0,
+        discount: data.discount || 0,
+        total,
+        notes: data.notes || "",
+        logoUrl: logoUrl,
+        items:
+          data.items?.length > 0
+            ? data.items.map((item) => ({
+                description: item.description || "Sample Item",
+                quantity: item.quantity || 1,
+                rate: item.rate || 0,
+                amount: (item.quantity || 1) * (item.rate || 0),
+              }))
+            : [
+                {
+                  description: "Sample Item - Add items above",
+                  quantity: 1,
+                  rate: 0,
+                  amount: 0,
+                },
+              ],
+        paymentInstructions:
+          data.paymentInstructions || "Payment instructions will appear here",
+      };
+
+      const pdfBuffer = await generateInvoicePDF(invoiceData);
+
+      // Clean up previous preview URL
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      // Create a Blob from the ArrayBuffer buffer
+      const blob = new Blob([pdfBuffer], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+
+      setPreviewUrl(url);
+      setPreviewOpen(true);
+    } catch (error) {
+      toast.error("Failed to generate invoice preview");
+      console.error(error);
+    } finally {
+      setGeneratingPreview(false);
+    }
+  };
+
+  // Function to close preview and clean up
+  const closePreview = () => {
+    setPreviewOpen(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
   };
 
   const handleDownloadPDF = async () => {
@@ -288,6 +356,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
         isDeletingLogo={deletingLogo}
         isSubmittingForm={submittingForm || isNavigating} // Disabled during both
         isDownloadingPDF={downloadingPDF}
+        isGeneratingPreview={generatingPreview}
         onPreview={handlePreview}
         onDownloadPDF={handleDownloadPDF}
         onSendEmail={handleSendEmail}
@@ -803,6 +872,14 @@ Payment is due within 14 days of the invoice date.`}
           </form>
         </Form>
       </div>
+
+      {previewOpen && (
+        <InvoicePreview
+          previewUrl={previewUrl}
+          closePreview={closePreview}
+          handleDownloadPDF={handleDownloadPDF}
+        />
+      )}
     </div>
   );
 };

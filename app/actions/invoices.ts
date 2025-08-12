@@ -9,7 +9,6 @@ import {
   uploadPDFToS3,
 } from "@/lib/utils";
 import { InvoiceFormData } from "@/types";
-import { revalidatePath } from "next/cache";
 
 export async function createInvoice(
   formData: InvoiceFormData,
