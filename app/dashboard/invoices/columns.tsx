@@ -1,5 +1,16 @@
 "use client";
 
+import { ColumnDef } from "@tanstack/react-table";
+import {
+  ArrowUpDown,
+  MoreHorizontal,
+  FileEdit,
+  Download,
+  MailWarning,
+  CircleDollarSign,
+  Trash2,
+} from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,8 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatCurrencyWithSymbol, formatDate } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 export const getColumns = (
   currency: string
@@ -87,7 +96,7 @@ export const getColumns = (
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const invoice = row.original;
 
       return (
         <DropdownMenu>
@@ -100,13 +109,40 @@ export const getColumns = (
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => console.log("Edit invoice", invoice.id)}
+              disabled={invoice.status === "PAID"}
             >
-              Copy payment ID
+              <FileEdit className="mr-2 h-4 w-4" />
+              Edit invoice
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => console.log("Download invoice", invoice.id)}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download invoice
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => console.log("Send reminder", invoice.id)}
+              disabled={invoice.status === "PAID"}
+            >
+              <MailWarning className="mr-2 h-4 w-4" />
+              Reminder email
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => console.log("Mark as paid", invoice.id)}
+              disabled={invoice.status === "PAID"}
+            >
+              <CircleDollarSign className="mr-2 h-4 w-4" />
+              Mark as paid
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => console.log("Delete invoice", invoice.id)}
+              className="text-red-600 focus:text-red-600"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete invoice
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
