@@ -117,8 +117,6 @@ export async function createInvoice(
 
     console.log(`Invoice sent successfully to email: ${invoice.clientEmail}`);
 
-    revalidatePath("/dashboard/invoices"); // Update cached invoices
-
     return {
       status: "success",
       message: "Invoice created and email sent successfully",
