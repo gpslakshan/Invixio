@@ -3,7 +3,7 @@ import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import InvoiceTable from "@/components/features/invoices/InvoiceTable";
+import InvoiceTable from "@/components/invoices/InvoiceTable";
 
 async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
   const invoices = await prisma.invoice.findMany({

@@ -1,7 +1,7 @@
-import { InvoiceStatusBreakdownPieChart } from "@/components/features/dashboard/InvoiceStatusBreakdownPieChart";
-import { InvoiceSummaryCard } from "@/components/features/dashboard/InvoiceSummaryCard";
-import { MonthlyRevenueBarChart } from "@/components/features/dashboard/MonthlyRevenueBarChart";
-import { QuickStatsCard } from "@/components/features/dashboard/QuickStatsCard";
+import { InvoiceStatusBreakdownPieChart } from "@/components/dashboard/InvoiceStatusBreakdownPieChart";
+import { InvoiceSummaryCard } from "@/components/dashboard/InvoiceSummaryCard";
+import { MonthlyRevenueBarChart } from "@/components/dashboard/MonthlyRevenueBarChart";
+import { QuickStatsCard } from "@/components/dashboard/QuickStatsCard";
 import {
   InvoiceStatusItem,
   InvoiceSummaryItem,

@@ -7,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../ui/card";
-import { Button } from "../../ui/button";
+} from "../ui/card";
+import { Button } from "../ui/button";
 import Link from "next/link";
 
 interface PricingPlan {

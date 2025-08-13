@@ -1,8 +1,8 @@
-import { Features } from "@/components/features/marketing/Features";
-import { Hero } from "@/components/features/marketing/Hero";
-import { Pricing } from "@/components/features/marketing/Pricing";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { Features } from "@/components/marketing/Features";
+import { Hero } from "@/components/marketing/Hero";
+import { Pricing } from "@/components/marketing/Pricing";
 
 export default async function Home() {
   return (

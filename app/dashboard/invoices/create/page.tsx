@@ -1,4 +1,4 @@
-import CreateInvoiceForm from "@/components/features/invoices/CreateInvoiceForm";
+import CreateInvoiceForm from "@/components/invoices/CreateInvoiceForm";
 import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
 
 export default async function CreateInvoicePage() {
