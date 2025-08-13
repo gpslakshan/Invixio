@@ -1,7 +1,7 @@
 "use client";
 
-import { getColumns } from "@/app/dashboard/invoices/columns";
-import { DataTable } from "@/app/dashboard/invoices/data-table";
+import { getColumns } from "@/components/invoices/tables/columns";
+import { DataTable } from "@/components/invoices/tables/data-table";
 import { InvoiceDataTableItem } from "@/types";
 import React from "react";
 

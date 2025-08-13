@@ -21,7 +21,6 @@ export const invoiceSchema = z.object({
   companyName: z.string().min(1, "Company name is required"),
   companyEmail: z.string().email("Please enter a valid email"),
   companyAddress: z.string().min(1, "Company address is required"),
-  currency: z.string().min(1, "Currency is required"),
 
   // Client information
   clientName: z.string().min(1, "Client name is required"),
