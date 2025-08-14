@@ -9,6 +9,8 @@ import {
   uploadPDFToS3,
 } from "@/lib/utils";
 import { EmailType, InvoiceFormData } from "@/types";
+import { InvoiceStatus } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 export async function createInvoice(
   formData: InvoiceFormData,
@@ -259,6 +261,81 @@ export async function editInvoice(
     return {
       status: "error",
       message: "Something went wrong. Please try again.",
+    };
+  }
+}
+
+export async function markInvoiceAsPaid(invoiceId: string) {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return {
+        status: "error",
+        message: "You must be logged in to mark the invoice as paid",
+      };
+    }
+
+    const updatedInvoice = await prisma.invoice.update({
+      where: {
+        id: invoiceId,
+        userId: user.id, // Security check: Ensure the user owns the invoice
+      },
+      data: {
+        status: InvoiceStatus.PAID,
+      },
+    });
+
+    console.log(`Invoice ${updatedInvoice.id} marked as paid.`);
+    revalidatePath("/dashboard/invoices");
+    return {
+      status: "success",
+      message: "Invoice successfully marked as paid.",
+    };
+  } catch (error) {
+    console.error("Error marking the invoice as paid:", error);
+
+    return {
+      status: "error",
+      message:
+        "Something went wrong. The invoice might not exist or you don't have permission to modify it.",
+    };
+  }
+}
+
+export async function markInvoiceAsUnpaid(invoiceId: string) {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return {
+        status: "error",
+        message: "You must be logged in to mark the invoice as unpaid.",
+      };
+    }
+
+    const updatedInvoice = await prisma.invoice.update({
+      where: {
+        id: invoiceId,
+        userId: user.id, // Security check: Ensure the user owns the invoice
+      },
+      data: {
+        status: InvoiceStatus.PENDING,
+      },
+    });
+
+    console.log(`Invoice ${updatedInvoice.id} marked as unpaid.`);
+    revalidatePath("/dashboard/invoices");
+    return {
+      status: "success",
+      message: "Invoice successfully marked as unpaid.",
+    };
+  } catch (error) {
+    console.error("Error marking the invoice as unpaid:", error);
+    return {
+      status: "error",
+      message:
+        "Something went wrong. The invoice might not exist or you don't have permission to modify it.",
     };
   }
 }

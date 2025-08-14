@@ -9,6 +9,7 @@ import {
   MailWarning,
   CircleDollarSign,
   Trash2,
+  Undo2,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,8 @@ import {
 import { formatCurrencyWithSymbol, formatDate } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
 import Link from "next/link";
+import { markInvoiceAsPaid, markInvoiceAsUnpaid } from "@/app/actions/invoices";
+import { toast } from "sonner";
 
 export const getColumns = (
   currency: string
@@ -98,6 +101,7 @@ export const getColumns = (
     id: "actions",
     cell: ({ row }) => {
       const invoice = row.original;
+      const isPaid = invoice.status === "PAID";
 
       return (
         <DropdownMenu>
@@ -115,12 +119,14 @@ export const getColumns = (
                 Edit invoice
               </Link>
             </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={() => console.log("Download invoice", invoice.id)}
             >
               <Download className="mr-2 h-4 w-4" />
               Download invoice
             </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={() => console.log("Send reminder", invoice.id)}
               disabled={invoice.status === "PAID"}
@@ -128,14 +134,22 @@ export const getColumns = (
               <MailWarning className="mr-2 h-4 w-4" />
               Reminder email
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Mark as paid", invoice.id)}
-              disabled={invoice.status === "PAID"}
-            >
-              <CircleDollarSign className="mr-2 h-4 w-4" />
-              Mark as paid
-            </DropdownMenuItem>
+
+            {/* Conditional action based on invoice status */}
+            {isPaid ? (
+              <DropdownMenuItem onClick={() => handleMarkAsUnpaid(invoice.id)}>
+                <Undo2 className="mr-2 h-4 w-4" />
+                Mark as unpaid
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={() => handleMarkAsPaid(invoice.id)}>
+                <CircleDollarSign className="mr-2 h-4 w-4" />
+                Mark as paid
+              </DropdownMenuItem>
+            )}
+
             <DropdownMenuSeparator />
+
             <DropdownMenuItem
               onClick={() => console.log("Delete invoice", invoice.id)}
               className="text-red-600 focus:text-red-600"
@@ -149,3 +163,23 @@ export const getColumns = (
     },
   },
 ];
+
+// Function to handle marking an invoice as paid
+const handleMarkAsPaid = async (invoiceId: string) => {
+  const result = await markInvoiceAsPaid(invoiceId);
+  if (result.status === "success") {
+    toast.success(result.message);
+  } else {
+    toast.error(result.message);
+  }
+};
+
+// Function to handle marking an invoice as unpaid
+const handleMarkAsUnpaid = async (invoiceId: string) => {
+  const result = await markInvoiceAsUnpaid(invoiceId);
+  if (result.status === "success") {
+    toast.success(result.message);
+  } else {
+    toast.error(result.message);
+  }
+};
