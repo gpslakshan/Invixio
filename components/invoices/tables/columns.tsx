@@ -25,7 +25,11 @@ import {
 import { formatCurrencyWithSymbol, formatDate } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
 import Link from "next/link";
-import { markInvoiceAsPaid, markInvoiceAsUnpaid } from "@/app/actions/invoices";
+import {
+  downloadInvoice,
+  markInvoiceAsPaid,
+  markInvoiceAsUnpaid,
+} from "@/app/actions/invoices";
 import { toast } from "sonner";
 
 export const getColumns = (
@@ -120,9 +124,7 @@ export const getColumns = (
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() => console.log("Download invoice", invoice.id)}
-            >
+            <DropdownMenuItem onClick={() => handleDownloadInvoice(invoice.id)}>
               <Download className="mr-2 h-4 w-4" />
               Download invoice
             </DropdownMenuItem>
@@ -179,6 +181,16 @@ const handleMarkAsUnpaid = async (invoiceId: string) => {
   const result = await markInvoiceAsUnpaid(invoiceId);
   if (result.status === "success") {
     toast.success(result.message);
+  } else {
+    toast.error(result.message);
+  }
+};
+
+const handleDownloadInvoice = async (invoiceId: string) => {
+  const result = await downloadInvoice(invoiceId);
+  if (result.status === "success") {
+    const invoiceUrl = result.data;
+    window.open(invoiceUrl, "_blank"); // Open the URL in a new browser tab.
   } else {
     toast.error(result.message);
   }

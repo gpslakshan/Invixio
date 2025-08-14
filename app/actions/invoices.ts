@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { BUCKET_NAME } from "@/lib/s3";
 import { invoiceSchema } from "@/lib/schemas";
 import {
   getCurrentUser,
@@ -336,6 +337,52 @@ export async function markInvoiceAsUnpaid(invoiceId: string) {
       status: "error",
       message:
         "Something went wrong. The invoice might not exist or you don't have permission to modify it.",
+    };
+  }
+}
+
+export async function downloadInvoice(invoiceId: string) {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return {
+        status: "error",
+        message: "You must be logged in to download the invoice",
+      };
+    }
+
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId, userId: user.id },
+      include: { items: true },
+    });
+
+    if (!invoice) {
+      return {
+        status: "error",
+        message: "invoice not found!",
+      };
+    }
+
+    const fileName = `invoice-${invoiceId}.pdf`;
+    const s3Key = `invoices/${fileName}`;
+
+    // Construct the public URL.
+    const s3Url = `https://${BUCKET_NAME}.s3.${process.env.AWS_REGION || "ap-south-1"}.amazonaws.com/${s3Key}`;
+
+    console.log("Successfully fetched the invoice PDF from S3");
+
+    return {
+      status: "success",
+      message: "Successfully downloaded the invoice",
+      data: s3Url,
+    };
+  } catch (error) {
+    console.error("Error downloading the invoice:", error);
+
+    return {
+      status: "error",
+      message: "Something went wrong. Please try again.",
     };
   }
 }
