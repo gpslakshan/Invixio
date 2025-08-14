@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Body,
   Tailwind,
@@ -11,7 +12,6 @@ import {
   Text,
   Link,
 } from "@react-email/components";
-import * as React from "react";
 
 interface Props {
   invoiceNumber: string;
@@ -22,7 +22,7 @@ interface Props {
   downloadUrl: string;
 }
 
-export const InvoiceEmailTemplate = ({
+const EditInvoiceEmailTemplate = ({
   invoiceNumber,
   companyName,
   clientName,
@@ -30,7 +30,7 @@ export const InvoiceEmailTemplate = ({
   dueDate,
   downloadUrl,
 }: Props) => {
-  const previewText = `Your invoice ${invoiceNumber} from ${companyName} is ready for download.`;
+  const previewText = `An updated invoice ${invoiceNumber} from ${companyName} is ready for download.`;
 
   return (
     <Html>
@@ -41,16 +41,18 @@ export const InvoiceEmailTemplate = ({
           <Container className="bg-white mx-auto py-5 mb-16">
             <Section className="bg-violet-600 px-8 py-5">
               <Text className="text-white text-2xl font-bold text-center m-0">
-                Invoice
+                Invoice Update
               </Text>
             </Section>
             <Section className="p-8">
               <Text className="text-base leading-6 mb-5 m-0">
                 Dear {clientName},
               </Text>
+              {/* Change the main body text to indicate an update */}
               <Text className="text-sm leading-6 text-slate-600 my-4">
                 Your invoice <strong>{invoiceNumber}</strong> from {companyName}{" "}
-                is ready for download.
+                has been updated. Please review the changes and download the
+                latest version.
               </Text>
               <Section className="bg-slate-50 rounded-lg p-5 my-5">
                 <Row className="mb-3">
@@ -91,14 +93,14 @@ export const InvoiceEmailTemplate = ({
                   href={downloadUrl}
                   className="bg-violet-600 text-white px-8 py-3 rounded-lg font-semibold text-base no-underline inline-block"
                 >
-                  Download Invoice PDF
+                  Download Updated Invoice PDF
                 </Link>
               </Section>
 
               <Text className="text-sm leading-6 text-slate-600 my-4">
-                Click the button above to download your invoice PDF. If you have
-                any questions regarding this invoice, please don't hesitate to
-                contact us.
+                Click the button above to download your updated invoice. If you
+                have any questions regarding this invoice, please don't hesitate
+                to contact us.
               </Text>
               <Text className="text-sm leading-6 text-slate-600 my-4">
                 Thank you for your business!
@@ -122,4 +124,4 @@ export const InvoiceEmailTemplate = ({
   );
 };
 
-export default InvoiceEmailTemplate;
+export default EditInvoiceEmailTemplate;

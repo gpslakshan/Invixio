@@ -7,12 +7,13 @@ import { prisma } from "@/lib/db";
 import jsPDF from "jspdf";
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import { render } from "@react-email/components";
-import InvoiceEmailTemplate from "@/emails/InvoiceEmailTemplate";
+import CreateInvoiceEmailTemplate from "@/emails/CreateInvoiceEmailTemplate";
 
 import { sesClient } from "@/lib/ses";
-import { InvoiceData } from "@/types";
+import { EmailType, InvoiceData } from "@/types";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { BUCKET_NAME, s3Client } from "./s3";
+import EditInvoiceEmailTemplate from "@/emails/EditInvoiceEmailTemplate";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -418,20 +419,38 @@ export async function uploadPDFToS3(
 // Email sending function
 export async function sendInvoiceEmail(
   invoice: InvoiceData,
-  downloadUrl: string
+  downloadUrl: string,
+  emailType: EmailType = EmailType.CREATE // Default to 'create'
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Render the email template to HTML
-    const emailHtml = await render(
-      InvoiceEmailTemplate({
-        invoiceNumber: invoice.invoiceNumber,
-        companyName: invoice.companyName,
-        clientName: invoice.clientName,
-        total: invoice.total,
-        dueDate: new Date(invoice.dueDate),
-        downloadUrl: downloadUrl,
-      })
-    );
+    let emailHtml: string;
+    let emailSubject: string;
+
+    if (emailType === EmailType.EDIT) {
+      emailHtml = await render(
+        EditInvoiceEmailTemplate({
+          invoiceNumber: invoice.invoiceNumber,
+          companyName: invoice.companyName,
+          clientName: invoice.clientName,
+          total: invoice.total,
+          dueDate: new Date(invoice.dueDate),
+          downloadUrl: downloadUrl,
+        })
+      );
+      emailSubject = `Updated Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+    } else {
+      emailHtml = await render(
+        CreateInvoiceEmailTemplate({
+          invoiceNumber: invoice.invoiceNumber,
+          companyName: invoice.companyName,
+          clientName: invoice.clientName,
+          total: invoice.total,
+          dueDate: new Date(invoice.dueDate),
+          downloadUrl: downloadUrl,
+        })
+      );
+      emailSubject = `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+    }
 
     const params: SendEmailCommandInput = {
       Source: process.env.SES_FROM_EMAIL!,
@@ -447,7 +466,7 @@ export async function sendInvoiceEmail(
         },
         Subject: {
           Charset: "UTF-8",
-          Data: `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`,
+          Data: emailSubject,
         },
       },
     };

@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatCurrencyWithSymbol, formatDate } from "@/lib/utils";
 import { InvoiceDataTableItem } from "@/types";
+import Link from "next/link";
 
 export const getColumns = (
   currency: string
@@ -108,12 +109,11 @@ export const getColumns = (
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => console.log("Edit invoice", invoice.id)}
-              disabled={invoice.status === "PAID"}
-            >
-              <FileEdit className="mr-2 h-4 w-4" />
-              Edit invoice
+            <DropdownMenuItem asChild disabled={invoice.status === "PAID"}>
+              <Link href={`/dashboard/invoices/${invoice.id}`}>
+                <FileEdit className="mr-2 h-4 w-4" />
+                Edit invoice
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => console.log("Download invoice", invoice.id)}

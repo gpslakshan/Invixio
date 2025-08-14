@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         port: "",
       },
+      {
+        hostname: "invixio-saas.s3.ap-south-1.amazonaws.com",
+        protocol: "https",
+        port: "",
+      },
     ],
   },
 };

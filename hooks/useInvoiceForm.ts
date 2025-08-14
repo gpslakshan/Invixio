@@ -1,25 +1,26 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { invoiceSchema } from "@/lib/schemas";
-import { InvoiceFormData } from "@/types";
+import { InvoiceData, InvoiceFormData } from "@/types";
 
-export const useInvoiceForm = () => {
+export const useInvoiceForm = (initialData?: InvoiceData) => {
   const form = useForm<InvoiceFormData>({
     resolver: zodResolver(invoiceSchema),
     defaultValues: {
-      companyName: "",
-      companyEmail: "",
-      companyAddress: "",
-      clientName: "",
-      clientEmail: "",
-      clientAddress: "",
-      invoiceNumber: "",
-      invoiceDate: new Date(),
-      items: [],
-      tax: 0,
-      discount: 0,
-      paymentInstructions: "",
-      notes: "",
+      companyName: initialData?.companyName || "",
+      companyEmail: initialData?.companyEmail || "",
+      companyAddress: initialData?.companyAddress || "",
+      clientName: initialData?.clientName || "",
+      clientEmail: initialData?.clientEmail || "",
+      clientAddress: initialData?.clientAddress || "",
+      invoiceNumber: initialData?.invoiceNumber || "",
+      invoiceDate: initialData?.invoiceDate || new Date(),
+      dueDate: initialData?.dueDate,
+      items: initialData?.items || [],
+      tax: initialData?.tax || 0,
+      discount: initialData?.discount || 0,
+      paymentInstructions: initialData?.paymentInstructions || "",
+      notes: initialData?.notes || "",
     },
   });
 

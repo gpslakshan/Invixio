@@ -67,3 +67,8 @@ export type InvoiceData = {
     amount: number;
   }>;
 };
+
+export enum EmailType {
+  CREATE = "create",
+  EDIT = "edit",
+}

@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { handleLogoUpload, deleteFromS3 } from "@/lib/utils";
+import { InvoiceData } from "@/types";
 
-export const useInvoiceLogo = () => {
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+export const useInvoiceLogo = (initialData?: InvoiceData) => {
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    initialData?.logoUrl || null
+  );
+  const [logoUrl, setLogoUrl] = useState<string | null>(
+    initialData?.logoUrl || null
+  );
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [deletingLogo, setDeletingLogo] = useState(false);
 
