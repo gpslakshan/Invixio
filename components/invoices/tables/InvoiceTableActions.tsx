@@ -161,7 +161,9 @@ const InvoiceTableActions = ({ invoice }: Props) => {
           <DropdownMenuItem
             onClick={() => setIsAlertDialogOpen(true)}
             className="text-red-600 focus:text-red-600"
-            disabled={invoice.status === "CANCELLED"}
+            disabled={
+              invoice.status === "PAID" || invoice.status === "CANCELLED"
+            }
           >
             <Ban className="mr-2 size-4 text-red-600 focus:text-red-600" />
             Cancel invoice
