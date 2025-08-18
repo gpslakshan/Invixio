@@ -14,6 +14,7 @@ import { EmailType, InvoiceData } from "@/types";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { BUCKET_NAME, s3Client } from "./s3";
 import EditInvoiceEmailTemplate from "@/emails/EditInvoiceEmailTemplate";
+import ReminderInvoiceEmailTemplate from "@/emails/ReminderInvoiceEmailTemplate";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -438,6 +439,18 @@ export async function sendInvoiceEmail(
         })
       );
       emailSubject = `Updated Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+    } else if (emailType === EmailType.REMINDER) {
+      emailHtml = await render(
+        ReminderInvoiceEmailTemplate({
+          invoiceNumber: invoice.invoiceNumber,
+          companyName: invoice.companyName,
+          clientName: invoice.clientName,
+          total: invoice.total,
+          dueDate: new Date(invoice.dueDate),
+          downloadUrl: downloadUrl,
+        })
+      );
+      emailSubject = `Payment Reminder: Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
     } else {
       emailHtml = await render(
         CreateInvoiceEmailTemplate({

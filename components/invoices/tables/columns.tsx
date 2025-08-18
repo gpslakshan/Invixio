@@ -29,6 +29,7 @@ import {
   downloadInvoice,
   markInvoiceAsPaid,
   markInvoiceAsUnpaid,
+  sendReminderEmail,
 } from "@/app/actions/invoices";
 import { toast } from "sonner";
 
@@ -130,7 +131,7 @@ export const getColumns = (
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              onClick={() => console.log("Send reminder", invoice.id)}
+              onClick={() => handleReminderEmail(invoice.id)}
               disabled={invoice.status === "PAID"}
             >
               <MailWarning className="mr-2 h-4 w-4" />
@@ -191,6 +192,15 @@ const handleDownloadInvoice = async (invoiceId: string) => {
   if (result.status === "success") {
     const invoiceUrl = result.data;
     window.open(invoiceUrl, "_blank"); // Open the URL in a new browser tab.
+  } else {
+    toast.error(result.message);
+  }
+};
+
+const handleReminderEmail = async (invoiceId: string) => {
+  const result = await sendReminderEmail(invoiceId);
+  if (result.status === "success") {
+    toast.success(result.message);
   } else {
     toast.error(result.message);
   }

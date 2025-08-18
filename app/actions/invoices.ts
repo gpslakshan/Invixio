@@ -386,3 +386,70 @@ export async function downloadInvoice(invoiceId: string) {
     };
   }
 }
+
+export async function sendReminderEmail(invoiceId: string) {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return {
+        status: "error",
+        message: "You must be logged in to send the reminder invoice email",
+      };
+    }
+
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId, userId: user.id },
+      include: { items: true },
+    });
+
+    if (!invoice) {
+      return {
+        status: "error",
+        message: "invoice not found!",
+      };
+    }
+
+    const fileName = `invoice-${invoiceId}.pdf`;
+    const s3Key = `invoices/${fileName}`;
+
+    // Construct the public URL.
+    const s3Url = `https://${BUCKET_NAME}.s3.${process.env.AWS_REGION || "ap-south-1"}.amazonaws.com/${s3Key}`;
+
+    console.log("Successfully constructed the invoice PDF's S3 URL: ", s3Url);
+
+    // Send email with S3 download link
+    const emailResult = await sendInvoiceEmail(
+      invoice,
+      s3Url,
+      EmailType.REMINDER
+    );
+
+    if (!emailResult.success) {
+      console.error(
+        "Failed to send the invoice reminder email: ",
+        emailResult.error
+      );
+      return {
+        status: "error",
+        message: "Failed to send the invoice reminder email. Please try again!",
+      };
+    }
+
+    console.log(
+      `Invoice reminder sent successfully to email: ${invoice.clientEmail}`
+    );
+
+    return {
+      status: "success",
+      message: `Successfully sent the reminder email to ${invoice.clientEmail}`,
+    };
+  } catch (error) {
+    console.error("Error sending the invoice reminder email:", error);
+
+    return {
+      status: "error",
+      message: "Something went wrong. Please try again!",
+    };
+  }
+}
