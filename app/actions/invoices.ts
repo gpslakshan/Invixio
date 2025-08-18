@@ -298,8 +298,7 @@ export async function markInvoiceAsPaid(invoiceId: string) {
 
     return {
       status: "error",
-      message:
-        "Something went wrong. The invoice might not exist or you don't have permission to modify it.",
+      message: "Something went wrong. Please try again.",
     };
   }
 }
@@ -335,8 +334,7 @@ export async function markInvoiceAsUnpaid(invoiceId: string) {
     console.error("Error marking the invoice as unpaid:", error);
     return {
       status: "error",
-      message:
-        "Something went wrong. The invoice might not exist or you don't have permission to modify it.",
+      message: "Something went wrong. Please try again.",
     };
   }
 }
@@ -432,7 +430,7 @@ export async function sendReminderEmail(invoiceId: string) {
       );
       return {
         status: "error",
-        message: "Failed to send the invoice reminder email. Please try again!",
+        message: "Failed to send the invoice reminder email. Please try again.",
       };
     }
 
@@ -449,7 +447,69 @@ export async function sendReminderEmail(invoiceId: string) {
 
     return {
       status: "error",
-      message: "Something went wrong. Please try again!",
+      message: "Something went wrong. Please try again.",
+    };
+  }
+}
+
+export async function cancelInvoice(invoiceId: string) {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return {
+        status: "error",
+        message: "You must be logged in to cancel the invoice.",
+      };
+    }
+
+    const updatedInvoice = await prisma.invoice.update({
+      where: {
+        id: invoiceId,
+        userId: user.id, // Security check: Ensure the user owns the invoice
+      },
+      data: {
+        status: InvoiceStatus.CANCELLED,
+      },
+      include: {
+        items: true,
+      },
+    });
+
+    console.log(`Invoice ${updatedInvoice.id} marked as cancelled.`);
+
+    const emailResult = await sendInvoiceEmail(
+      updatedInvoice,
+      undefined,
+      EmailType.CANCEL
+    );
+
+    if (!emailResult.success) {
+      console.warn(
+        "Failed to send the invoice cancellation email: ",
+        emailResult.error
+      );
+      return {
+        status: "warning",
+        message:
+          "Invoice status updated to cancelled, but the cancellation email failed to send. You may need to notify the client manually.",
+      };
+    }
+
+    console.log(
+      `invoice cancellation email successfully sent to: ${updatedInvoice.clientEmail}`
+    );
+
+    revalidatePath("/dashboard/invoices");
+    return {
+      status: "success",
+      message: "Invoice has been successfully cancelled.",
+    };
+  } catch (error) {
+    console.error("Error cancelling the invoice:", error);
+    return {
+      status: "error",
+      message: "Something went wrong. Please try again.",
     };
   }
 }

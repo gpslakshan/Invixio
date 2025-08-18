@@ -15,6 +15,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { BUCKET_NAME, s3Client } from "./s3";
 import EditInvoiceEmailTemplate from "@/emails/EditInvoiceEmailTemplate";
 import ReminderInvoiceEmailTemplate from "@/emails/ReminderInvoiceEmailTemplate";
+import CancelInvoiceEmailTemplate from "@/emails/CancelInvoiceEmailTemplate";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -417,52 +418,77 @@ export async function uploadPDFToS3(
   }
 }
 
-// Email sending function
+/**
+ * Sends an invoice email based on the specified type.
+ * @param invoice The invoice data.
+ * @param downloadUrl The URL to download the invoice.
+ * @param emailType The type of email to send (CREATE, EDIT, REMINDER, or CANCEL).
+ * @returns An object indicating success or failure.
+ */
 export async function sendInvoiceEmail(
   invoice: InvoiceData,
-  downloadUrl: string,
+  downloadUrl?: string, // Made optional for cancel email
   emailType: EmailType = EmailType.CREATE // Default to 'create'
 ): Promise<{ success: boolean; error?: string }> {
   try {
     let emailHtml: string;
     let emailSubject: string;
 
-    if (emailType === EmailType.EDIT) {
-      emailHtml = await render(
-        EditInvoiceEmailTemplate({
-          invoiceNumber: invoice.invoiceNumber,
-          companyName: invoice.companyName,
-          clientName: invoice.clientName,
-          total: invoice.total,
-          dueDate: new Date(invoice.dueDate),
-          downloadUrl: downloadUrl,
-        })
-      );
-      emailSubject = `Updated Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
-    } else if (emailType === EmailType.REMINDER) {
-      emailHtml = await render(
-        ReminderInvoiceEmailTemplate({
-          invoiceNumber: invoice.invoiceNumber,
-          companyName: invoice.companyName,
-          clientName: invoice.clientName,
-          total: invoice.total,
-          dueDate: new Date(invoice.dueDate),
-          downloadUrl: downloadUrl,
-        })
-      );
-      emailSubject = `Payment Reminder: Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
-    } else {
-      emailHtml = await render(
-        CreateInvoiceEmailTemplate({
-          invoiceNumber: invoice.invoiceNumber,
-          companyName: invoice.companyName,
-          clientName: invoice.clientName,
-          total: invoice.total,
-          dueDate: new Date(invoice.dueDate),
-          downloadUrl: downloadUrl,
-        })
-      );
-      emailSubject = `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+    switch (emailType) {
+      case EmailType.EDIT:
+        emailHtml = await render(
+          EditInvoiceEmailTemplate({
+            invoiceNumber: invoice.invoiceNumber,
+            companyName: invoice.companyName,
+            clientName: invoice.clientName,
+            total: invoice.total,
+            dueDate: new Date(invoice.dueDate),
+            downloadUrl: downloadUrl!,
+          })
+        );
+        emailSubject = `Updated Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+        break;
+
+      case EmailType.REMINDER:
+        emailHtml = await render(
+          ReminderInvoiceEmailTemplate({
+            invoiceNumber: invoice.invoiceNumber,
+            companyName: invoice.companyName,
+            clientName: invoice.clientName,
+            total: invoice.total,
+            dueDate: new Date(invoice.dueDate),
+            downloadUrl: downloadUrl!,
+          })
+        );
+        emailSubject = `Payment Reminder: Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+        break;
+
+      case EmailType.CANCEL:
+        emailHtml = await render(
+          CancelInvoiceEmailTemplate({
+            invoiceNumber: invoice.invoiceNumber,
+            companyName: invoice.companyName,
+            clientName: invoice.clientName,
+          })
+        );
+        emailSubject = `Invoice ${invoice.invoiceNumber} from ${invoice.companyName} Has Been Canceled`;
+        break;
+
+      case EmailType.CREATE:
+      default:
+        // Default case for 'create'
+        emailHtml = await render(
+          CreateInvoiceEmailTemplate({
+            invoiceNumber: invoice.invoiceNumber,
+            companyName: invoice.companyName,
+            clientName: invoice.clientName,
+            total: invoice.total,
+            dueDate: new Date(invoice.dueDate),
+            downloadUrl: downloadUrl!,
+          })
+        );
+        emailSubject = `Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
+        break;
     }
 
     const params: SendEmailCommandInput = {

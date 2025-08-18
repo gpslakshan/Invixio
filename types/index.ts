@@ -72,4 +72,5 @@ export enum EmailType {
   CREATE = "create",
   EDIT = "edit",
   REMINDER = "reminder",
+  CANCEL = "cancel",
 }
