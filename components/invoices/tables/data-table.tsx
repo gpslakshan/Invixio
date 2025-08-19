@@ -24,8 +24,14 @@ import {
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusIcon } from "lucide-react";
+import { Filter, PlusIcon } from "lucide-react";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -59,16 +65,57 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex flex-col-reverse gap-6 md:gap-2 md:flex-row md:items-center md:justify-between py-4">
-        <Input
-          placeholder="Filter Customers..."
-          value={
-            (table.getColumn("clientName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("clientName")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="flex flex-col md:flex-row gap-1 md:items-center">
+          <Input
+            placeholder="Filter Customers..."
+            value={
+              (table.getColumn("clientName")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("clientName")?.setFilterValue(event.target.value)
+            }
+            className="md:w-[300px] xl:w-[380px]"
+          />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Filter /> Filter by Status
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {["DRAFT", "PENDING", "PAID", "CANCELLED"].map((status) => {
+                const selected =
+                  (table.getColumn("status")?.getFilterValue() as string[]) ??
+                  [];
+
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={status}
+                    checked={selected.includes(status)}
+                    onCheckedChange={(checked) => {
+                      const current =
+                        (table
+                          .getColumn("status")
+                          ?.getFilterValue() as string[]) ?? [];
+                      if (checked) {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue([...current, status]);
+                      } else {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue(current.filter((s) => s !== status));
+                      }
+                    }}
+                  >
+                    {status}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <Link
           href="/dashboard/invoices/create"

@@ -43,6 +43,11 @@ export const getColumns = (
   {
     accessorKey: "status",
     header: "Status",
+    filterFn: (row, columnId, filterValue) => {
+      // filterValue will be an array of selected statuses
+      if (!filterValue?.length) return true;
+      return filterValue.includes(row.getValue(columnId));
+    },
     cell: ({ row }) => {
       const status: string = row.getValue("status");
 
