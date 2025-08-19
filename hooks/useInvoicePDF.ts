@@ -102,17 +102,10 @@ export const useInvoicePDF = ({
   };
 
   const handleDownloadPDF = async () => {
-    // Validate form before submitting
-    const isValid = await form.trigger();
-    if (!isValid) {
-      toast.error("Please fix form errors before downloading");
-      return;
-    }
-
     const data = form.getValues();
     setDownloadingPDF(true);
     try {
-      const invoiceData = createInvoiceData(data);
+      const invoiceData = createInvoiceData(data, true);
       const pdfBuffer = await generateInvoicePDF(invoiceData);
       const filename = "invoice.pdf";
 

@@ -45,7 +45,6 @@ const CreateInvoiceForm = ({ currency }: Props) => {
   } = useInvoiceLogo();
 
   const {
-    downloadingPDF,
     generatingPreview,
     previewOpen,
     previewUrl,
@@ -67,10 +66,8 @@ const CreateInvoiceForm = ({ currency }: Props) => {
         isUploadingLogo={uploadingLogo}
         isDeletingLogo={deletingLogo}
         isSubmittingForm={submittingForm || isNavigating}
-        isDownloadingPDF={downloadingPDF}
         isGeneratingPreview={generatingPreview}
         onPreview={handlePreview}
-        onDownloadPDF={handleDownloadPDF}
         onSendEmail={handleSendEmail}
         isSticky={sticky}
       />

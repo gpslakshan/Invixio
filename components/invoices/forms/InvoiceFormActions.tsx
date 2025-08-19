@@ -1,28 +1,25 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { DownloadIcon, EyeIcon, Mail } from "lucide-react";
+import { ArrowLeft, EyeIcon, Mail, MoveLeft } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 interface Props {
   onPreview: () => void;
-  onDownloadPDF: () => void;
   onSendEmail: () => void;
   isUploadingLogo: boolean;
   isDeletingLogo: boolean;
   isSubmittingForm: boolean;
-  isDownloadingPDF: boolean;
   isGeneratingPreview: boolean;
   isSticky: boolean;
 }
 
 const InvoiceFormActions = ({
   onPreview,
-  onDownloadPDF,
   onSendEmail,
   isUploadingLogo,
   isDeletingLogo,
   isSubmittingForm,
-  isDownloadingPDF,
   isGeneratingPreview,
   isSticky,
 }: Props) => {
@@ -33,23 +30,20 @@ const InvoiceFormActions = ({
         isSticky ? "shadow-md" : ""
       )}
     >
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={onPreview}
-        disabled={isGeneratingPreview}
+      <Link
+        className={buttonVariants({ variant: "secondary", size: "sm" })}
+        href="/dashboard/invoices"
       >
-        <EyeIcon /> {isGeneratingPreview ? "Generating..." : "Preview"}
-      </Button>
+        <ArrowLeft /> Go Back
+      </Link>
       <div className="flex flex-col md:flex-row gap-3">
         <Button
           variant="secondary"
           size="sm"
-          onClick={onDownloadPDF}
-          disabled={isDownloadingPDF}
+          onClick={onPreview}
+          disabled={isGeneratingPreview}
         >
-          <DownloadIcon />{" "}
-          {isDownloadingPDF ? "Downloading..." : "Download PDF"}
+          <EyeIcon /> {isGeneratingPreview ? "Generating..." : "Preview"}
         </Button>
         <Button
           size="sm"
