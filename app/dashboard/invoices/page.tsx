@@ -18,6 +18,9 @@ async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
       status: true,
       invoiceDate: true,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return invoices;
@@ -29,18 +32,21 @@ export default function InvoicesPage() {
       <h1 className="text-2xl font-bold mb-4">Invoices</h1>
       <p>Manage your Invoices here.</p>
 
+      {/* The Suspense boundary wraps the data-fetching component */}
       <Suspense fallback={<LoadingSpinner />}>
-        <InvoicesGrid />
+        <InvoiceTableWrapper />
       </Suspense>
     </div>
   );
 }
 
-async function InvoicesGrid() {
+// This async Server Component fetches the data required for the table
+async function InvoiceTableWrapper() {
   const user = await getCurrentUser();
   const invoices = await fetchInvoices(user?.id);
   const currency = await fetchUserCurrency();
 
+  // It then renders the original InvoiceTable with the fetched data
   return (
     <div className="mt-6">
       <InvoiceTable currency={currency} invoices={invoices} />

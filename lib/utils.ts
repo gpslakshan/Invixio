@@ -30,6 +30,10 @@ export function getTodayDate() {
 
 export async function getCurrentUser() {
   const { getUser } = getKindeServerSession();
+
+  // Add a fake delay of 3000 milliseconds (3 seconds)
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   const user = await getUser();
   return user;
 }

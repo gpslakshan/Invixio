@@ -1,7 +1,9 @@
 import EditInvoiceForm from "@/components/invoices/forms/EditInvoiceForm";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { prisma } from "@/lib/db";
 import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 async function fetchInvoiceById(invoiceId: string, userId: string) {
   const invoice = await prisma.invoice.findUnique({
@@ -20,10 +22,6 @@ type Params = Promise<{ invoiceId: string }>;
 
 export default async function EditInvoicePage({ params }: { params: Params }) {
   const { invoiceId } = await params;
-  const user = await getCurrentUser();
-  const currency = await fetchUserCurrency();
-
-  const invoice = await fetchInvoiceById(invoiceId, user?.id as string);
 
   return (
     <div className="p-6">
@@ -32,7 +30,21 @@ export default async function EditInvoicePage({ params }: { params: Params }) {
         Edit invoices by updating line items, quantities, pricing, and customer
         details. You can also adjust dates, discounts, and taxes.
       </p>
-      <EditInvoiceForm invoice={invoice} currency={currency} />
+
+      {/* The Suspense boundary wraps the data-fetching component */}
+      <Suspense fallback={<LoadingSpinner />}>
+        <InvoiceFormWrapper invoiceId={invoiceId} />
+      </Suspense>
     </div>
   );
+}
+
+// This async Server Component fetches the data required for the form
+async function InvoiceFormWrapper({ invoiceId }: { invoiceId: string }) {
+  const user = await getCurrentUser();
+  const currency = await fetchUserCurrency();
+  const invoice = await fetchInvoiceById(invoiceId, user?.id as string);
+
+  // It then renders the original EditInvoiceForm with the fetched data
+  return <EditInvoiceForm invoice={invoice} currency={currency} />;
 }
