@@ -1,6 +1,6 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, EyeIcon, Mail, MoveLeft } from "lucide-react";
+import { ArrowLeft, EyeIcon, Mail } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
