@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FileText, LayoutDashboard, Users } from "lucide-react";
+import { FileText, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Logo from "@/public/logo.svg";
@@ -10,7 +10,6 @@ import Logo from "@/public/logo.svg";
 export const links = [
   { id: 0, href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { id: 1, href: "/dashboard/invoices", label: "Invoices", icon: FileText },
-  { id: 2, href: "/dashboard/clients", label: "Clients", icon: Users },
 ];
 
 export function Sidebar() {
