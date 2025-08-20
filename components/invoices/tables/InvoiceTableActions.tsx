@@ -87,10 +87,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
     }
   };
 
-  const handleCancelInvoice = async (
-    invoiceId: string,
-    setCancellingInvoice: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
+  const handleCancelInvoice = async (invoiceId: string) => {
     setCancellingInvoice(true);
 
     const result = await cancelInvoice(invoiceId);
@@ -190,9 +187,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() =>
-                handleCancelInvoice(invoice.id, setCancellingInvoice)
-              }
+              onClick={() => handleCancelInvoice(invoice.id)}
               disabled={isCancellingInvoice}
             >
               {isCancellingInvoice ? "Please wait..." : "Continue"}
