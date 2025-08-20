@@ -1,7 +1,9 @@
+import { Suspense } from "react";
+
 import CreateInvoiceForm from "@/components/invoices/forms/CreateInvoiceForm";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
-import { Suspense } from "react";
+import { fetchUserProfile, getCurrentUser } from "@/lib/utils";
+import { UserProfile } from "@/types";
 
 export default function CreateInvoicePage() {
   return (
@@ -22,8 +24,8 @@ export default function CreateInvoicePage() {
 // This async Server Component fetches the data required for the form
 async function InvoiceFormWrapper() {
   const user = await getCurrentUser();
-  const prefferedCurrency = await fetchUserCurrency(user?.id);
+  const profile = await fetchUserProfile(user?.id || "");
 
   // It then renders the original CreateInvoiceForm with the fetched data
-  return <CreateInvoiceForm currency={prefferedCurrency} />;
+  return <CreateInvoiceForm profile={profile as UserProfile} />;
 }

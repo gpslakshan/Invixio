@@ -2,6 +2,9 @@ import { z } from "zod";
 import { getTodayDate } from "./utils";
 
 export const onboardingSchema = z.object({
+  companyName: z.string().min(1, "Company name is required"),
+  companyEmail: z.string().email("Please enter a valid email"),
+  companyAddress: z.string().min(1, "Company address is required"),
   businessType: z.enum(["freelancer", "small_business", "other"], {
     error: () => ({ message: "Please tell us about your business." }),
   }),

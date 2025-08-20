@@ -1,19 +1,29 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { onboardingSchema } from "@/lib/schemas";
 import { getCurrentUser } from "@/lib/utils";
+import { OnboardingFormData } from "@/types";
 
-export async function completeOnboardingProcess(
-  data: z.infer<typeof onboardingSchema>
-) {
+export async function completeOnboardingProcess(formData: OnboardingFormData) {
   try {
     const user = await getCurrentUser();
 
     if (!user) {
-      return { status: "error", message: "Unauthorized" };
+      return {
+        status: "error",
+        message: "You must be logged in to complete the onboarding process",
+      };
+    }
+
+    const validatedData = onboardingSchema.safeParse(formData);
+
+    if (!validatedData.success) {
+      return {
+        status: "error",
+        message: "Invalid form data. Please check your inputs.",
+      };
     }
 
     await prisma.user.update({
@@ -22,8 +32,11 @@ export async function completeOnboardingProcess(
       },
       data: {
         hasOnboarded: true,
-        businessType: data.businessType,
-        currency: data.currency,
+        businessType: validatedData.data.businessType,
+        currency: validatedData.data.currency,
+        companyName: validatedData.data.companyName,
+        companyEmail: validatedData.data.companyEmail,
+        companyAddress: validatedData.data.companyAddress,
       },
     });
 

@@ -19,12 +19,13 @@ import InvoiceSummary from "./sections/InvoiceSummary";
 import IssuerDetails from "./sections/IssuerDetails";
 import LogoUploader from "./sections/LogoUploader";
 import PaymentInstructions from "./sections/PaymentInstructions";
+import { UserProfile } from "@/types";
 
 interface Props {
-  currency: string;
+  profile: UserProfile;
 }
 
-const CreateInvoiceForm = ({ currency }: Props) => {
+const CreateInvoiceForm = ({ profile }: Props) => {
   const {
     form,
     fields,
@@ -33,7 +34,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
     total,
     handleAddItem,
     handleRemoveItem,
-  } = useInvoiceForm();
+  } = useInvoiceForm(profile);
 
   const {
     logoPreview,
@@ -98,7 +99,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               form={form}
               fields={fields}
               watchedItems={watchedItems}
-              currency={currency}
+              currency={profile.currency}
               handleAddItem={handleAddItem}
               handleRemoveItem={handleRemoveItem}
             />
@@ -108,7 +109,7 @@ const CreateInvoiceForm = ({ currency }: Props) => {
               form={form}
               subtotal={subtotal}
               total={total}
-              currency={currency}
+              currency={profile.currency}
             />
 
             {/* Payment Instructions */}

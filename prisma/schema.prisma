@@ -14,15 +14,18 @@ datasource db {
 }
 
 model User {
-  id           String   @id @unique
-  firstName    String
-  lastName     String
-  email        String
-  hasOnboarded Boolean  @default(false)
-  businessType String?
-  currency     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String   @id @unique
+  firstName      String
+  lastName       String
+  email          String
+  hasOnboarded   Boolean  @default(false)
+  companyName    String
+  companyEmail   String
+  companyAddress String
+  businessType   String
+  currency       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   Invoices Invoice[] // One-to-many: User -> Invoices
 
@@ -30,11 +33,14 @@ model User {
 }
 
 model Invoice {
-  id                  String        @id @default(uuid())
-  invoiceNumber       String
-  companyName         String
-  companyEmail        String
-  companyAddress      String
+  id            String @id @default(uuid())
+  invoiceNumber String
+
+  // Snapshot fields - Invoices are “frozen in time.” Even if a user changes their name, email, or address, old invoices should still reflect the exact details at the time of issuance (important for accounting/legal compliance).
+  companyName    String
+  companyEmail   String
+  companyAddress String
+
   clientName          String
   clientEmail         String
   clientAddress       String

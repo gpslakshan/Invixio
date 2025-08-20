@@ -4,7 +4,7 @@ import React from "react";
 import { Form } from "@/components/ui/form";
 import InvoiceFormActions from "./InvoiceFormActions";
 import InvoicePreview from "./InvoicePreview";
-import { InvoiceData } from "@/types";
+import { InvoiceData, UserProfile } from "@/types";
 
 import { useInvoiceEmail } from "@/hooks/useInvoiceEmail";
 import { useInvoiceForm } from "@/hooks/useInvoiceForm";
@@ -23,10 +23,10 @@ import PaymentInstructions from "./sections/PaymentInstructions";
 
 interface Props {
   invoice: InvoiceData;
-  currency: string;
+  profile: UserProfile;
 }
 
-const EditInvoiceForm = ({ invoice, currency }: Props) => {
+const EditInvoiceForm = ({ invoice, profile }: Props) => {
   const {
     form,
     fields,
@@ -35,7 +35,7 @@ const EditInvoiceForm = ({ invoice, currency }: Props) => {
     total,
     handleAddItem,
     handleRemoveItem,
-  } = useInvoiceForm(invoice);
+  } = useInvoiceForm(profile, invoice);
 
   const {
     logoPreview,
@@ -100,7 +100,7 @@ const EditInvoiceForm = ({ invoice, currency }: Props) => {
               form={form}
               fields={fields}
               watchedItems={watchedItems}
-              currency={currency}
+              currency={profile.currency}
               handleAddItem={handleAddItem}
               handleRemoveItem={handleRemoveItem}
             />
@@ -110,7 +110,7 @@ const EditInvoiceForm = ({ invoice, currency }: Props) => {
               form={form}
               subtotal={subtotal}
               total={total}
-              currency={currency}
+              currency={profile.currency}
             />
 
             {/* Payment Instructions */}

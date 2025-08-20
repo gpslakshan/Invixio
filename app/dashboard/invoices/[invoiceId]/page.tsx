@@ -1,9 +1,11 @@
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+
 import EditInvoiceForm from "@/components/invoices/forms/EditInvoiceForm";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import { prisma } from "@/lib/db";
-import { fetchUserCurrency, getCurrentUser } from "@/lib/utils";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { fetchUserProfile, getCurrentUser } from "@/lib/utils";
+import { UserProfile } from "@/types";
 
 async function fetchInvoiceById(invoiceId: string, userId: string) {
   const invoice = await prisma.invoice.findUnique({
@@ -42,9 +44,9 @@ export default async function EditInvoicePage({ params }: { params: Params }) {
 // This async Server Component fetches the data required for the form
 async function InvoiceFormWrapper({ invoiceId }: { invoiceId: string }) {
   const user = await getCurrentUser();
-  const currency = await fetchUserCurrency();
+  const profile = await fetchUserProfile(user?.id as string);
   const invoice = await fetchInvoiceById(invoiceId, user?.id as string);
 
   // It then renders the original EditInvoiceForm with the fetched data
-  return <EditInvoiceForm invoice={invoice} currency={currency} />;
+  return <EditInvoiceForm invoice={invoice} profile={profile as UserProfile} />;
 }

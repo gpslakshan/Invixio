@@ -10,13 +10,14 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { buttonVariants } from "../ui/button";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 export function Navbar() {
   const { getUser } = useKindeBrowserClient();
   const user = getUser();
+  const pathname = usePathname();
 
-  if (user) {
+  if (user && pathname === "/") {
     return redirect("/dashboard");
   }
 

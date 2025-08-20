@@ -3,29 +3,44 @@ import { InvoiceStatus } from "@prisma/client";
 import { JSX } from "react";
 import { z } from "zod";
 
-export interface InvoiceSummaryItem {
+export type UserProfile = {
+  currency: string;
+  companyName: string;
+  email: string;
+  companyEmail: string;
+  companyAddress: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  hasOnboarded: boolean;
+  businessType: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type InvoiceSummaryItem = {
   title: string;
   value: string;
   description: string;
   icon: JSX.Element;
-}
+};
 
-export interface QuickStatItem {
+export type QuickStatItem = {
   title: string;
   value: string;
   description: string;
   icon: JSX.Element;
-}
+};
 
-export interface RevenueByMonthItem {
+export type RevenueByMonthItem = {
   month: string;
   revenue: number;
-}
+};
 
-export interface InvoiceStatusItem {
+export type InvoiceStatusItem = {
   name: "Paid" | "Unpaid" | "Overdue" | "Canceled";
   value: number;
-}
+};
 
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;
 

@@ -10,7 +10,7 @@ import { render } from "@react-email/components";
 import CreateInvoiceEmailTemplate from "@/emails/CreateInvoiceEmailTemplate";
 
 import { sesClient } from "@/lib/ses";
-import { EmailType, InvoiceData } from "@/types";
+import { EmailType, InvoiceData, UserProfile } from "@/types";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { BUCKET_NAME, s3Client } from "./s3";
 import EditInvoiceEmailTemplate from "@/emails/EditInvoiceEmailTemplate";
@@ -47,7 +47,9 @@ export async function fetchUserCurrency(userId?: string): Promise<string> {
   return user?.currency || "USD";
 }
 
-export async function fetchUserProfile(userId: string) {
+export async function fetchUserProfile(
+  userId: string
+): Promise<UserProfile | null> {
   return await prisma.user.findUnique({
     where: { id: userId },
   });

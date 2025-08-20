@@ -75,6 +75,11 @@ async function handleUserCreated(user: KindeWebhookEvent["data"]["user"]) {
         email: user.email!,
         firstName: user.first_name || "",
         lastName: user.last_name || "",
+        currency: "USD",
+        businessType: "",
+        companyName: "",
+        companyEmail: "",
+        companyAddress: "",
       },
     });
     console.log(`User synced to database: ${user.email}`);
