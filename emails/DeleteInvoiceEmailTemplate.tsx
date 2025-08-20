@@ -18,7 +18,7 @@ interface Props {
   clientName: string;
 }
 
-export const CancelInvoiceEmailTemplate = ({
+export const DeleteInvoiceEmailTemplate = ({
   invoiceNumber,
   companyName,
   clientName,
@@ -36,7 +36,7 @@ export const CancelInvoiceEmailTemplate = ({
             {/* The header section has been updated to reflect the cancellation status. */}
             <Section className="bg-red-600 px-8 py-5">
               <Text className="text-white text-2xl font-bold text-center m-0">
-                Invoice Canceled
+                Invoice Deleted
               </Text>
             </Section>
             <Section className="p-8">
@@ -47,13 +47,13 @@ export const CancelInvoiceEmailTemplate = ({
               <Text className="text-sm leading-6 text-slate-600 my-4">
                 This email is to confirm that invoice{" "}
                 <strong>{invoiceNumber}</strong> from {companyName} has been
-                successfully canceled.
+                successfully deleted.
               </Text>
 
               {/* Removed the download button section and related text. */}
               <Text className="text-sm leading-6 text-slate-600 my-4">
-                If you have any questions or concerns regarding this
-                cancellation, please don't hesitate to contact us.
+                If you have any questions or concerns regarding this deletion,
+                please don't hesitate to contact us.
               </Text>
               <Text className="text-sm leading-6 text-slate-600 mt-8">
                 Best regards,
@@ -74,4 +74,4 @@ export const CancelInvoiceEmailTemplate = ({
   );
 };
 
-export default CancelInvoiceEmailTemplate;
+export default DeleteInvoiceEmailTemplate;

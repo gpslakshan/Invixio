@@ -452,61 +452,58 @@ export async function sendReminderEmail(invoiceId: string) {
   }
 }
 
-export async function cancelInvoice(invoiceId: string) {
+export async function deleteInvoice(invoiceId: string) {
   try {
     const user = await getCurrentUser();
 
     if (!user) {
       return {
         status: "error",
-        message: "You must be logged in to cancel the invoice.",
+        message: "You must be logged in to delete the invoice.",
       };
     }
 
-    const updatedInvoice = await prisma.invoice.update({
+    const deletedInvoice = await prisma.invoice.delete({
       where: {
         id: invoiceId,
         userId: user.id, // Security check: Ensure the user owns the invoice
-      },
-      data: {
-        status: InvoiceStatus.CANCELLED,
       },
       include: {
         items: true,
       },
     });
 
-    console.log(`Invoice ${updatedInvoice.id} marked as cancelled.`);
+    console.log(`Invoice ${deletedInvoice.id} deleted successfully.`);
 
     const emailResult = await sendInvoiceEmail(
-      updatedInvoice,
+      deletedInvoice,
       undefined,
-      EmailType.CANCEL
+      EmailType.DELETE
     );
 
     if (!emailResult.success) {
       console.warn(
-        "Failed to send the invoice cancellation email: ",
+        "Failed to send the invoice deletion email: ",
         emailResult.error
       );
       return {
         status: "warning",
         message:
-          "Invoice status updated to cancelled, but the cancellation email failed to send. You may need to notify the client manually.",
+          "Invoice deleted successfully, but the deletion email failed to send. You may need to notify the client manually.",
       };
     }
 
     console.log(
-      `invoice cancellation email successfully sent to: ${updatedInvoice.clientEmail}`
+      `invoice deletion email successfully sent to: ${deletedInvoice.clientEmail}`
     );
 
     revalidatePath("/dashboard/invoices");
     return {
       status: "success",
-      message: "Invoice has been successfully cancelled.",
+      message: "Invoice has been successfully deleted.",
     };
   } catch (error) {
-    console.error("Error cancelling the invoice:", error);
+    console.error("Error deleting the invoice:", error);
     return {
       status: "error",
       message: "Something went wrong. Please try again.",

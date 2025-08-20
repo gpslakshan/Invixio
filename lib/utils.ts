@@ -15,7 +15,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { BUCKET_NAME, s3Client } from "./s3";
 import EditInvoiceEmailTemplate from "@/emails/EditInvoiceEmailTemplate";
 import ReminderInvoiceEmailTemplate from "@/emails/ReminderInvoiceEmailTemplate";
-import CancelInvoiceEmailTemplate from "@/emails/CancelInvoiceEmailTemplate";
+import DeleteInvoiceEmailTemplate from "@/emails/DeleteInvoiceEmailTemplate";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -463,15 +463,15 @@ export async function sendInvoiceEmail(
         emailSubject = `Payment Reminder: Invoice ${invoice.invoiceNumber} from ${invoice.companyName}`;
         break;
 
-      case EmailType.CANCEL:
+      case EmailType.DELETE:
         emailHtml = await render(
-          CancelInvoiceEmailTemplate({
+          DeleteInvoiceEmailTemplate({
             invoiceNumber: invoice.invoiceNumber,
             companyName: invoice.companyName,
             clientName: invoice.clientName,
           })
         );
-        emailSubject = `Invoice ${invoice.invoiceNumber} from ${invoice.companyName} Has Been Canceled`;
+        emailSubject = `Invoice ${invoice.invoiceNumber} from ${invoice.companyName} Has Been Deleted`;
         break;
 
       case EmailType.CREATE:

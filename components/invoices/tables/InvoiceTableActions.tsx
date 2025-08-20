@@ -9,13 +9,13 @@ import {
   MailWarning,
   CircleDollarSign,
   Undo2,
-  Ban,
+  Trash,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import { InvoiceDataTableItem } from "@/types";
 import {
-  cancelInvoice,
+  deleteInvoice,
   downloadInvoice,
   markInvoiceAsPaid,
   markInvoiceAsUnpaid,
@@ -47,7 +47,7 @@ interface Props {
 
 const InvoiceTableActions = ({ invoice }: Props) => {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
-  const [isCancellingInvoice, setCancellingInvoice] = useState(false);
+  const [isDeletingInvoice, setIsDeletingInvoice] = useState(false);
   const isPaid = invoice.status === "PAID";
 
   const handleMarkAsPaid = async (invoiceId: string) => {
@@ -87,18 +87,19 @@ const InvoiceTableActions = ({ invoice }: Props) => {
     }
   };
 
-  const handleCancelInvoice = async (invoiceId: string) => {
-    setCancellingInvoice(true);
+  const handleDeleteInvoice = async (invoiceId: string) => {
+    setIsDeletingInvoice(true);
 
-    const result = await cancelInvoice(invoiceId);
+    const result = await deleteInvoice(invoiceId);
     if (result.status === "success") {
       toast.success(result.message);
     } else {
       toast.error(result.message);
     }
 
-    setCancellingInvoice(false);
+    setIsDeletingInvoice(false);
   };
+
   return (
     <>
       <DropdownMenu>
@@ -110,12 +111,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            asChild
-            disabled={
-              invoice.status === "PAID" || invoice.status === "CANCELLED"
-            }
-          >
+          <DropdownMenuItem asChild disabled={invoice.status === "PAID"}>
             <Link href={`/dashboard/invoices/${invoice.id}`}>
               <FileEdit className="mr-2 size-4" />
               Edit invoice
@@ -129,9 +125,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
 
           <DropdownMenuItem
             onClick={() => handleReminderEmail(invoice.id)}
-            disabled={
-              invoice.status === "PAID" || invoice.status === "CANCELLED"
-            }
+            disabled={invoice.status === "PAID"}
           >
             <MailWarning className="mr-2 size-4" />
             Reminder email
@@ -144,10 +138,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
               Mark as unpaid
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem
-              onClick={() => handleMarkAsPaid(invoice.id)}
-              disabled={invoice.status === "CANCELLED"}
-            >
+            <DropdownMenuItem onClick={() => handleMarkAsPaid(invoice.id)}>
               <CircleDollarSign className="mr-2 size-4" />
               Mark as paid
             </DropdownMenuItem>
@@ -158,27 +149,25 @@ const InvoiceTableActions = ({ invoice }: Props) => {
           <DropdownMenuItem
             onClick={() => setIsAlertDialogOpen(true)}
             className="text-red-600 focus:text-red-600"
-            disabled={
-              invoice.status === "PAID" || invoice.status === "CANCELLED"
-            }
+            disabled={invoice.status === "PAID"}
           >
-            <Ban className="mr-2 size-4 text-red-600 focus:text-red-600" />
-            Cancel invoice
+            <Trash className="mr-2 size-4 text-red-600 focus:text-red-600" />
+            Delete invoice
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
       <AlertDialog
-        open={isAlertDialogOpen || isCancellingInvoice}
+        open={isAlertDialogOpen || isDeletingInvoice}
         onOpenChange={setIsAlertDialogOpen}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to cancel this invoice?
+              Are you sure you want to delete this invoice?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action will permanently cancel the invoice and cannot be
+              This action will permanently delete the invoice and cannot be
               reversed.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -187,10 +176,10 @@ const InvoiceTableActions = ({ invoice }: Props) => {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => handleCancelInvoice(invoice.id)}
-              disabled={isCancellingInvoice}
+              onClick={() => handleDeleteInvoice(invoice.id)}
+              disabled={isDeletingInvoice}
             >
-              {isCancellingInvoice ? "Please wait..." : "Continue"}
+              {isDeletingInvoice ? "Please wait..." : "Delete Invoice"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
