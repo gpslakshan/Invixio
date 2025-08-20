@@ -144,7 +144,7 @@ export async function editInvoice(
     if (!user) {
       return {
         status: "error",
-        message: "You must be logged in to create an invoice",
+        message: "You must be logged in to update an invoice",
       };
     }
 
