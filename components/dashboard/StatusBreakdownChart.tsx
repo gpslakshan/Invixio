@@ -11,11 +11,19 @@ import {
 } from "../ui/chart";
 import { Pie, PieChart } from "recharts";
 
-const chartData = [
-  { status: "paid", count: 6, fill: "var(--color-paid)" },
-  { status: "pending", count: 3, fill: "var(--color-pending)" },
-  { status: "overdue", count: 2, fill: "var(--color-overdue)" },
-];
+// const chartData = [
+//   { status: "paid", count: 6, fill: "var(--color-paid)" },
+//   { status: "pending", count: 3, fill: "var(--color-pending)" },
+//   { status: "overdue", count: 2, fill: "var(--color-overdue)" },
+// ];
+
+interface Props {
+  chartData: {
+    status: string;
+    count: number;
+    fill: string;
+  }[];
+}
 
 const chartConfig = {
   count: {
@@ -35,11 +43,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const StatusBreakdownChart = () => {
+const StatusBreakdownChart = ({ chartData }: Props) => {
   return (
     <ChartContainer
       config={chartConfig}
-      className="mx-auto aspect-square max-h-[250px] md:max-h-[350px]"
+      className="mx-auto aspect-square max-h-[250px] md:max-h-[350px] xl:max-h-[500px]"
     >
       <PieChart>
         <ChartTooltip

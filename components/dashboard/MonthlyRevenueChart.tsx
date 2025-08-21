@@ -7,16 +7,23 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "../ui/chart";
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
-const chartData = [
-  { month: "Mar", revenue: 5200 },
-  { month: "Apr", revenue: 5000 },
-  { month: "May", revenue: 5500 },
-  { month: "Jun", revenue: 6100 },
-  { month: "Jul", revenue: 5800 },
-  { month: "Aug", revenue: 6000 },
-];
+// const chartData = [
+//   { month: "Mar", revenue: 5200 },
+//   { month: "Apr", revenue: 5000 },
+//   { month: "May", revenue: 5500 },
+//   { month: "Jun", revenue: 6100 },
+//   { month: "Jul", revenue: 5800 },
+//   { month: "Aug", revenue: 6000 },
+// ];
+
+interface Props {
+  chartData: {
+    month: string;
+    revenue: number;
+  }[];
+}
 
 const chartConfig = {
   revenue: {
@@ -25,7 +32,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const MonthlyRevenueChart = () => {
+const MonthlyRevenueChart = ({ chartData }: Props) => {
   return (
     <ChartContainer config={chartConfig}>
       <BarChart accessibilityLayer data={chartData}>
@@ -41,15 +48,7 @@ const MonthlyRevenueChart = () => {
           cursor={false}
           content={<ChartTooltipContent hideLabel />}
         />
-        <Bar dataKey="revenue" fill="var(--color-primary)" radius={8}>
-          <LabelList
-            position="top"
-            offset={12}
-            className="fill-foreground"
-            fontSize={12}
-            formatter={(value: number) => `$${value}`}
-          />
-        </Bar>
+        <Bar dataKey="revenue" fill="var(--color-primary)" radius={8} />
       </BarChart>
     </ChartContainer>
   );

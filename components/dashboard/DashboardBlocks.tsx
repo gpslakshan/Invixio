@@ -8,50 +8,64 @@ import {
   getCurrencySymbol,
   getCurrentUser,
 } from "@/lib/utils";
+import { subDays } from "date-fns";
 
 async function getData(userId: string) {
-  const [invoices, paidInvoices, openInvoices] = await Promise.all([
-    prisma.invoice.findMany({
-      where: {
-        userId,
-      },
-      select: {
-        total: true,
-      },
-    }),
-
-    prisma.invoice.findMany({
-      where: {
-        userId,
-        status: "PAID",
-      },
-      select: {
-        id: true,
-      },
-    }),
-
-    prisma.invoice.findMany({
-      where: {
-        userId,
-        status: {
-          in: ["PENDING", "OVERDUE"],
+  const [invoices, revenueInvoices, paidInvoices, openInvoices] =
+    await Promise.all([
+      prisma.invoice.findMany({
+        where: {
+          userId,
         },
-      },
-      select: {
-        id: true,
-      },
-    }),
-  ]);
+        select: {
+          total: true,
+        },
+      }),
 
-  return { invoices, paidInvoices, openInvoices };
+      prisma.invoice.findMany({
+        where: {
+          userId,
+          status: "PAID",
+          createdAt: {
+            gte: subDays(new Date(), 30), // invoices issued in the last 30 days
+          },
+        },
+        select: {
+          total: true,
+        },
+      }),
+
+      prisma.invoice.findMany({
+        where: {
+          userId,
+          status: "PAID",
+        },
+        select: {
+          id: true,
+        },
+      }),
+
+      prisma.invoice.findMany({
+        where: {
+          userId,
+          status: {
+            in: ["PENDING", "OVERDUE"],
+          },
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
+
+  return { invoices, revenueInvoices, paidInvoices, openInvoices };
 }
 
 const DashboardBlocks = async () => {
   const user = await getCurrentUser();
   const currency = await fetchUserCurrency(user?.id as string);
-  const { invoices, paidInvoices, openInvoices } = await getData(
-    user?.id as string
-  );
+  const { invoices, revenueInvoices, paidInvoices, openInvoices } =
+    await getData(user?.id as string);
 
   return (
     <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4 md:gap-8 mb-2 md:mb-8">
@@ -64,7 +78,7 @@ const DashboardBlocks = async () => {
           <h2 className="text-2xl font-bold">
             {getCurrencySymbol(currency)}{" "}
             {formatCurrencyValue(
-              invoices.reduce((acc, invoice) => acc + invoice.total, 0)
+              revenueInvoices.reduce((acc, invoice) => acc + invoice.total, 0)
             )}
           </h2>
           <p className="text-xs text-muted-foreground">
