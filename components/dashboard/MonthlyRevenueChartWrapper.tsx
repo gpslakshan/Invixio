@@ -15,7 +15,7 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 async function getData(userId: string): Promise<
   {
     month: string;
-    revenue: any;
+    revenue: number;
   }[]
 > {
   const sixMonthsAgo = new Date();
@@ -59,7 +59,7 @@ async function getData(userId: string): Promise<
   });
 
   const allMonths = [];
-  let currentDate = new Date();
+  const currentDate = new Date();
   for (let i = 0; i < 6; i++) {
     const month = currentDate.toLocaleString("default", { month: "short" });
     const year = currentDate.getFullYear();
