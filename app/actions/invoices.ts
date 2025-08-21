@@ -284,6 +284,7 @@ export async function markInvoiceAsPaid(invoiceId: string) {
       },
       data: {
         status: InvoiceStatus.PAID,
+        paidAt: new Date(),
       },
     });
 
@@ -314,13 +315,35 @@ export async function markInvoiceAsUnpaid(invoiceId: string) {
       };
     }
 
+    // Step 1: Fetch the invoice with dueDate
+    const invoice = await prisma.invoice.findUnique({
+      where: {
+        id: invoiceId,
+        userId: user.id, // Security check
+      },
+      select: {
+        dueDate: true,
+      },
+    });
+
+    if (!invoice) {
+      throw new Error("Invoice not found");
+    }
+
+    // Step 2: Compare current date with dueDate
+    const now = new Date();
+    const status =
+      now <= invoice.dueDate ? InvoiceStatus.PENDING : InvoiceStatus.OVERDUE;
+
+    // Step 3: Update with conditional status
     const updatedInvoice = await prisma.invoice.update({
       where: {
         id: invoiceId,
-        userId: user.id, // Security check: Ensure the user owns the invoice
+        userId: user.id,
       },
       data: {
-        status: InvoiceStatus.PENDING,
+        status,
+        paidAt: null,
       },
     });
 

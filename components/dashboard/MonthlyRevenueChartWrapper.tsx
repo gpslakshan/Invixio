@@ -15,7 +15,7 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 async function getData(userId: string): Promise<
   {
     month: string;
-    revenue: number;
+    revenue: any;
   }[]
 > {
   const sixMonthsAgo = new Date();
@@ -25,38 +25,41 @@ async function getData(userId: string): Promise<
     where: {
       userId: userId,
       status: "PAID",
-      createdAt: {
+      paidAt: {
+        // Use the new paidAt field
         gte: sixMonthsAgo,
       },
     },
     select: {
       total: true,
-      createdAt: true,
+      paidAt: true, // Select the paidAt field
     },
     orderBy: {
-      createdAt: "asc",
+      paidAt: "asc",
     },
   });
 
   const monthlyRevenueMap = new Map();
 
   invoices.forEach((invoice) => {
-    const month = invoice.createdAt.toLocaleString("default", {
-      month: "short",
-    });
-    const year = invoice.createdAt.getFullYear();
-    const key = `${month}-${year}`;
+    // Check if paidAt is not null before using it
+    if (invoice.paidAt) {
+      const month = invoice.paidAt.toLocaleString("default", {
+        month: "short",
+      });
+      const year = invoice.paidAt.getFullYear();
+      const key = `${month}-${year}`;
 
-    if (monthlyRevenueMap.has(key)) {
-      monthlyRevenueMap.set(key, monthlyRevenueMap.get(key) + invoice.total);
-    } else {
-      monthlyRevenueMap.set(key, invoice.total);
+      if (monthlyRevenueMap.has(key)) {
+        monthlyRevenueMap.set(key, monthlyRevenueMap.get(key) + invoice.total);
+      } else {
+        monthlyRevenueMap.set(key, invoice.total);
+      }
     }
   });
 
-  // Generate a list of the last 6 months to ensure the chart has 6 data points, even if a month has no revenue.
   const allMonths = [];
-  const currentDate = new Date();
+  let currentDate = new Date();
   for (let i = 0; i < 6; i++) {
     const month = currentDate.toLocaleString("default", { month: "short" });
     const year = currentDate.getFullYear();
@@ -64,7 +67,6 @@ async function getData(userId: string): Promise<
     currentDate.setMonth(currentDate.getMonth() - 1);
   }
 
-  // Format the data for the chart, using 0 for months with no revenue
   const chartData = allMonths.map((monthKey) => {
     const [month] = monthKey.split("-");
     const revenue = monthlyRevenueMap.get(monthKey) || 0;

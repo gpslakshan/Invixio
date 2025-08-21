@@ -26,8 +26,8 @@ async function getData(userId: string) {
         where: {
           userId,
           status: "PAID",
-          createdAt: {
-            gte: subDays(new Date(), 30), // invoices issued in the last 30 days
+          paidAt: {
+            gte: subDays(new Date(), 30), // invoices paid in the last 30 days
           },
         },
         select: {
