@@ -48,6 +48,7 @@ interface Props {
 const InvoiceTableActions = ({ invoice }: Props) => {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
   const [isDeletingInvoice, setIsDeletingInvoice] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isPaid = invoice.status === "PAID";
 
@@ -70,6 +71,8 @@ const InvoiceTableActions = ({ invoice }: Props) => {
   };
 
   const handleDownloadInvoice = async (invoiceId: string) => {
+    setIsDownloading(true);
+
     const result = await downloadInvoice(invoiceId);
     if (result.status === "success") {
       const invoiceUrl = result.data;
@@ -78,6 +81,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
       toast.error(result.message);
     }
 
+    setIsDownloading(false);
     setIsMenuOpen(false); // <-- close dropdown AFTER download completes
   };
 
@@ -126,9 +130,10 @@ const InvoiceTableActions = ({ invoice }: Props) => {
           <DropdownMenuItem
             onSelect={(e) => e.preventDefault()}
             onClick={() => handleDownloadInvoice(invoice.id)}
+            disabled={isDownloading}
           >
             <Download className="mr-2 size-4" />
-            Download invoice
+            {isDownloading ? "Downloading..." : "Download invoice"}
           </DropdownMenuItem>
 
           {!isPaid && (
