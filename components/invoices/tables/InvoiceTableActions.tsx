@@ -48,6 +48,7 @@ interface Props {
 const InvoiceTableActions = ({ invoice }: Props) => {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
   const [isDeletingInvoice, setIsDeletingInvoice] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isPaid = invoice.status === "PAID";
 
   const handleMarkAsPaid = async (invoiceId: string) => {
@@ -76,6 +77,8 @@ const InvoiceTableActions = ({ invoice }: Props) => {
     } else {
       toast.error(result.message);
     }
+
+    setIsMenuOpen(false); // <-- close dropdown AFTER download completes
   };
 
   const handleReminderEmail = async (invoiceId: string) => {
@@ -102,7 +105,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
@@ -111,25 +114,32 @@ const InvoiceTableActions = ({ invoice }: Props) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem asChild disabled={invoice.status === "PAID"}>
-            <Link href={`/dashboard/invoices/${invoice.id}`}>
-              <FileEdit className="mr-2 size-4" />
-              Edit invoice
-            </Link>
-          </DropdownMenuItem>
+          {!isPaid && (
+            <DropdownMenuItem asChild disabled={invoice.status === "PAID"}>
+              <Link href={`/dashboard/invoices/${invoice.id}`}>
+                <FileEdit className="mr-2 size-4" />
+                Edit invoice
+              </Link>
+            </DropdownMenuItem>
+          )}
 
-          <DropdownMenuItem onClick={() => handleDownloadInvoice(invoice.id)}>
+          <DropdownMenuItem
+            onSelect={(e) => e.preventDefault()}
+            onClick={() => handleDownloadInvoice(invoice.id)}
+          >
             <Download className="mr-2 size-4" />
             Download invoice
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => handleReminderEmail(invoice.id)}
-            disabled={invoice.status === "PAID"}
-          >
-            <MailWarning className="mr-2 size-4" />
-            Reminder email
-          </DropdownMenuItem>
+          {!isPaid && (
+            <DropdownMenuItem
+              onClick={() => handleReminderEmail(invoice.id)}
+              disabled={invoice.status === "PAID"}
+            >
+              <MailWarning className="mr-2 size-4" />
+              Reminder email
+            </DropdownMenuItem>
+          )}
 
           {/* Conditional action based on invoice status */}
           {isPaid ? (
@@ -144,16 +154,18 @@ const InvoiceTableActions = ({ invoice }: Props) => {
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuSeparator />
+          {!isPaid && <DropdownMenuSeparator />}
 
-          <DropdownMenuItem
-            onClick={() => setIsAlertDialogOpen(true)}
-            className="text-red-600 focus:text-red-600"
-            disabled={invoice.status === "PAID"}
-          >
-            <Trash className="mr-2 size-4 text-red-600 focus:text-red-600" />
-            Delete invoice
-          </DropdownMenuItem>
+          {!isPaid && (
+            <DropdownMenuItem
+              onClick={() => setIsAlertDialogOpen(true)}
+              className="text-red-600 focus:text-red-600"
+              disabled={invoice.status === "PAID"}
+            >
+              <Trash className="mr-2 size-4 text-red-600 focus:text-red-600" />
+              Delete invoice
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
