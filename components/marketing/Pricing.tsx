@@ -38,7 +38,7 @@ export const PricingPlans: PricingPlan[] = [
     cardTitle: "Pro",
     cardDescription:
       "Unlock unlimited potential with advanced tools designed for growing businesses.",
-    priceTitle: "$25/month",
+    priceTitle: "$29/month",
     benefits: [
       "Unlimited invoices",
       "Advanced dashboard and analytics",
