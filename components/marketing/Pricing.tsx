@@ -22,35 +22,35 @@ interface PricingPlan {
 export const PricingPlans: PricingPlan[] = [
   {
     id: 0,
-    cardTitle: "Freelancer",
+    cardTitle: "Starter",
     cardDescription:
-      "Get started with the essentials — perfect for solo professionals.",
+      "Perfect for freelancers and small businesses just getting started. No credit card required.",
     benefits: [
-      "Manage 5 Clients",
-      "Create Up to 10 Invoices/Month",
-      "Send Invoices via Email",
-      "Basic Dashboard Insights",
+      "Create and send up to 5 invoices per month",
+      "Download and print professional PDF invoices",
+      "Real-time invoice preview",
+      "Track invoice status",
     ],
-    priceTitle: "Free",
+    priceTitle: "$0/month",
   },
   {
     id: 1,
-    cardTitle: "Professional",
+    cardTitle: "Pro",
     cardDescription:
-      "For growing businesses that need full control and automation.",
-    priceTitle: "$29/mo",
+      "Unlock unlimited potential with advanced tools designed for growing businesses.",
+    priceTitle: "$25/month",
     benefits: [
-      "Unlimited Clients",
-      "Unlimited Invoices",
-      "Send Invoices via Email",
-      "Advanced Analytics & Exports",
+      "Unlimited invoices",
+      "Advanced dashboard and analytics",
+      "Automatic overdue payment reminders",
+      "Priority customer support",
     ],
   },
 ];
 
-export function Pricing() {
+export function Pricing({ id }: { id: string }) {
   return (
-    <section className="py-16">
+    <section className="py-16" id={id}>
       {/* Section Header */}
       <div className="max-w-4xl mx-auto text-center">
         <p className="font-semibold text-primary tracking-wide">Pricing</p>
@@ -58,8 +58,9 @@ export function Pricing() {
           Simple pricing for every invoicing need
         </h1>
         <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-          Whether you&apos;re just starting out or scaling fast, Invixio has a
-          plan that fits. Pay only for what you need — no hidden fees, ever.
+          Whether you&apos;re just starting out or scaling your business,
+          Invixio offers flexible plans to fit your invoicing needs—no hidden
+          fees, no surprises.
         </p>
       </div>
 

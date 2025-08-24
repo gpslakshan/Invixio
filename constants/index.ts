@@ -306,3 +306,66 @@ export const currencies = [
   { code: "ZMW", name: "Zambian Kwacha", country: "Zambia", flag: "🇿🇲" },
   { code: "ZWL", name: "Zimbabwean Dollar", country: "Zimbabwe", flag: "🇿🇼" },
 ];
+
+export const frequentlyAskedQuestions = [
+  {
+    id: "FAQ-1",
+    question: "What is Invixio?",
+    answer:
+      "Invixio is an online invoicing platform that helps freelancers and businesses create, manage, and track invoices with ease.",
+  },
+  {
+    id: "FAQ-2",
+    question: "What is the difference between the Free and Pro plans?",
+    answer:
+      "The Free plan is designed for freelancers and small businesses, allowing you to create and send up to 5 invoices per month with basic tracking. The Pro plan includes everything in the Free plan, plus unlimited invoices and clients, advanced analytics, and automated features like overdue payment reminders.",
+  },
+  {
+    id: "FAQ-3",
+    question: "Can I upgrade or downgrade my plan anytime?",
+    answer:
+      "Absolutely. You can switch plans at any time directly from your dashboard.",
+  },
+  {
+    id: "FAQ-4",
+    question: "Are there any hidden fees with the Pro plan?",
+    answer:
+      "No, the price you see is the price you pay. The Pro plan costs a flat rate of $29 per month. There are no hidden fees or extra charges for using the features listed in your plan.",
+  },
+  {
+    id: "FAQ-5",
+    question: "What payment methods do you accept?",
+    answer:
+      "We process all payments securely through Stripe and accept all major credit cards, including Visa, Mastercard, American Express, and Discover.",
+  },
+  {
+    id: "FAQ-6",
+    question: "What happens to my data if I cancel my Pro plan?",
+    answer:
+      "If you cancel your Pro plan, your account will revert to the Free plan at the end of your current billing cycle. All your invoices and client data will remain safe and accessible in your account. You will simply be limited to the features of the Free plan.",
+  },
+  {
+    id: "FAQ-7",
+    question: "Does Invixio support custom branding on invoices?",
+    answer:
+      "Yes. Invixio supports custom branding on invoices in both the Free and Pro plans, allowing you to add your logo and personalize your invoices to match your brand.",
+  },
+  {
+    id: "FAQ-8",
+    question: "How does overdue tracking work?",
+    answer:
+      "Invixio automatically updates invoice statuses to “Overdue” when the due date passes, so you always know which invoices need attention.",
+  },
+  {
+    id: "FAQ-9",
+    question: "Is my data secure?",
+    answer:
+      "Yes. Invixio takes data protection seriously. We implement strict access controls and best practices to ensure your information is handled carefully and kept private.",
+  },
+  {
+    id: "FAQ-10",
+    question: "Does Invixio support all currencies to use in invoices?",
+    answer:
+      "Yes, Invixio supports 161 different currencies, allowing you to create and send invoices to clients all over the world. You will be asked to select your preferred currency during the onboarding process, and this currency cannot be changed later.",
+  },
+];

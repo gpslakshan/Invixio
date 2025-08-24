@@ -4,19 +4,19 @@ import { buttonVariants } from "@/components/ui/button";
 import HeroImage from "@/public/hero.png";
 import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
-export function Hero() {
+export function Hero({ id }: { id: string }) {
   return (
     <>
-      <section className="relative flex items-center justify-center">
+      <section className="relative flex items-center justify-center" id={id}>
         <div className="relative items-center w-full py-12 lg:py-20">
           <div className="text-center">
             <span className="text-sm text-primary font-medium tracking-tight bg-primary/10 px-4 py-2 rounded-full">
-              Effortless Invoicing for Modern Businesses
+              Effortless Invoicing. Get Paid Faster.
             </span>
 
             <h1 className="mt-8 text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-medium leading-none">
-              Send Invoices{" "}
-              <span className="block text-primary">in Seconds!</span>
+              Smart Invoicing
+              <span className="block text-primary">Simplified.</span>
             </h1>
 
             <p className="max-w-xl mx-auto mt-4 text-base font-light lg:text-lg text-muted-foreground tracking-tighter">
@@ -24,7 +24,9 @@ export function Hero() {
               business. Create and send invoices with just a few clicks.
             </p>
             <div className="flex items-center gap-x-5 w-full justify-center mt-5">
-              <LoginLink className={buttonVariants()}>Get Started</LoginLink>
+              <LoginLink className={buttonVariants()}>
+                Start Free Trial
+              </LoginLink>
             </div>
           </div>
 

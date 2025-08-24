@@ -1,43 +1,44 @@
-import { FileText, LayoutDashboard, Users, SendHorizonal } from "lucide-react";
+import { FileText, LayoutDashboard, Eye, BarChart } from "lucide-react";
 
 const features = [
   {
-    name: "Client Management",
+    name: "Streamlined Invoicing & Management",
     description:
-      "Add, view, and manage all your clients in one centralized hub for seamless invoicing.",
-    icon: Users,
-  },
-  {
-    name: "Invoice Management",
-    description:
-      "Create, edit, and track invoices with detailed statuses and payment updates.",
-    icon: FileText,
-  },
-  {
-    name: "Sending Invoices",
-    description:
-      "Send professional invoices to your clients via email with just a few clicks.",
-    icon: SendHorizonal,
-  },
-  {
-    name: "Dashboard & Overview",
-    description:
-      "Get a snapshot of your invoicing activity, revenue, and outstanding payments.",
+      "Create, edit, and send professional invoices in minutes. Our intuitive dashboard gives you a complete overview of all your billing, allowing you to easily track, update, and manage every invoice in one place.",
     icon: LayoutDashboard,
+  },
+  {
+    name: "Instant Invoice Preview",
+    description:
+      "See exactly what your clients will see, before you even send it. Our real-time preview feature lets you perfect every detail of your invoice, ensuring it looks professional and polished from the start.",
+    icon: Eye,
+  },
+  {
+    name: "Real-Time Insights & Analytics",
+    description:
+      "Make smarter business decisions with a powerful dashboard. Get a clear view of your financial health, track payment statuses, and gain valuable insights into your cash flow with easy-to-read reports.",
+    icon: BarChart,
+  },
+  {
+    name: "Professional & Sharable Invoices",
+    description:
+      "Present a polished brand image with every invoice you send. Generate high-quality PDF invoices that are ready to download, print, or send directly to your clients via email with just a click.",
+    icon: FileText,
   },
 ];
 
-export function Features() {
+export function Features({ id }: { id: string }) {
   return (
-    <div className="py-16">
+    <section className="py-16" id={id}>
       <div className="max-w-2xl mx-auto lg:text-center">
         <p className="font-semibold leading-7 text-primary">Why Invixio?</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
           All-in-one invoicing made effortless
         </h1>
         <p className="mt-6 text-base leading-snug text-muted-foreground">
-          Invixio helps you manage clients, send invoices, and monitor your
-          business growth from one simple dashboard.
+          From seamless invoice creation to powerful tracking and insights,
+          Invixio gives you everything you need to manage billing with ease and
+          confidence.
         </p>
       </div>
 
@@ -58,6 +59,6 @@ export function Features() {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
