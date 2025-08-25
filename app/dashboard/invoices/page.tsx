@@ -4,6 +4,7 @@ import { InvoiceDataTableItem } from "@/types";
 import { Suspense } from "react";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import InvoiceTable from "@/components/invoices/tables/InvoiceTable";
+import EmptyState from "@/components/shared/EmptyState";
 
 async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
   const invoices = await prisma.invoice.findMany({
@@ -28,7 +29,7 @@ async function fetchInvoices(userId?: string): Promise<InvoiceDataTableItem[]> {
 
 export default function InvoicesPage() {
   return (
-    <div className="p-6">
+    <div>
       <h1 className="text-2xl font-bold mb-4">Invoices</h1>
       <p>Manage your Invoices here.</p>
 
@@ -46,10 +47,15 @@ async function InvoiceTableWrapper() {
   const invoices = await fetchInvoices(user?.id);
   const currency = await fetchUserCurrency();
 
-  // It then renders the original InvoiceTable with the fetched data
   return (
-    <div className="mt-6">
-      <InvoiceTable currency={currency} invoices={invoices} />
-    </div>
+    <>
+      {invoices.length > 0 ? (
+        <div className="mt-6">
+          <InvoiceTable currency={currency} invoices={invoices} />
+        </div>
+      ) : (
+        <EmptyState />
+      )}
+    </>
   );
 }

@@ -208,7 +208,6 @@ export async function generateInvoicePDF(
   const subTotal = invoice.subtotal;
   const tax = subTotal * ((invoice.taxPercentage || 0) / 100);
   const discount = subTotal * ((invoice.discountPercentage || 0) / 100);
-  const total = subTotal + tax - discount;
 
   // set global font
   pdf.setFont("helvetica");

@@ -26,7 +26,7 @@ export default async function EditInvoicePage({ params }: { params: Params }) {
   const { invoiceId } = await params;
 
   return (
-    <div className="p-6">
+    <div>
       <h1 className="text-2xl font-bold mb-4">Edit Invoice</h1>
       <p className="mb-8">
         Edit invoices by updating line items, quantities, pricing, and customer

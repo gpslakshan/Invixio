@@ -7,7 +7,7 @@ import { UserProfile } from "@/types";
 
 export default function CreateInvoicePage() {
   return (
-    <div className="p-6">
+    <div>
       <h1 className="text-2xl font-bold mb-4">Create New Invoice</h1>
       <p className="mb-8">
         Easily generate and send an invoice for your client.

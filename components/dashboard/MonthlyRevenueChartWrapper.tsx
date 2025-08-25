@@ -115,24 +115,26 @@ const MonthlyRevenueChartWrapper = async () => {
           <MonthlyRevenueChart chartData={chartData} />
         )}
       </CardContent>
-      <CardFooter className="flex-col items-center gap-2 text-sm">
-        <div
-          className={`flex gap-2 leading-none font-medium ${
-            isTrendingUp ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          Trending {isTrendingUp ? "up" : "down"} by{" "}
-          {Math.abs(percentageChange).toFixed(1)}% this month
-          {isTrendingUp ? (
-            <TrendingUp className="size-4" />
-          ) : (
-            <TrendingDown className="size-4" />
-          )}
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total revenue for the last 6 months
-        </div>
-      </CardFooter>
+      {!chartData.every((item) => item.revenue === 0) && (
+        <CardFooter className="flex-col items-center gap-2 text-sm">
+          <div
+            className={`flex gap-2 leading-none font-medium ${
+              isTrendingUp ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            Trending {isTrendingUp ? "up" : "down"} by{" "}
+            {Math.abs(percentageChange).toFixed(1)}% this month
+            {isTrendingUp ? (
+              <TrendingUp className="size-4" />
+            ) : (
+              <TrendingDown className="size-4" />
+            )}
+          </div>
+          <div className="text-muted-foreground leading-none">
+            Showing total revenue for the last 6 months
+          </div>
+        </CardFooter>
+      )}
     </Card>
   );
 };
