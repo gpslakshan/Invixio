@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { DollarSign, FileCheck, FileText, FileWarning } from "lucide-react";
 import { prisma } from "@/lib/db";
@@ -9,6 +9,7 @@ import {
   getCurrentUser,
 } from "@/lib/utils";
 import { subDays } from "date-fns";
+import DashboardBlocksLoadingSkeletons from "./DashboardBlocksLoadingSkeletons";
 
 async function getData(userId: string) {
   const [invoices, revenueInvoices, paidInvoices, openInvoices] =
@@ -61,7 +62,7 @@ async function getData(userId: string) {
   return { invoices, revenueInvoices, paidInvoices, openInvoices };
 }
 
-const DashboardBlocks = async () => {
+async function DashboardBlocksContent() {
   const user = await getCurrentUser();
   const currency = await fetchUserCurrency(user?.id as string);
   const { invoices, revenueInvoices, paidInvoices, openInvoices } =
@@ -126,6 +127,14 @@ const DashboardBlocks = async () => {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+const DashboardBlocks = () => {
+  return (
+    <Suspense fallback={<DashboardBlocksLoadingSkeletons />}>
+      <DashboardBlocksContent />
+    </Suspense>
   );
 };
 
