@@ -21,8 +21,8 @@ export const useInvoiceForm = (
       invoiceDate: initialData?.invoiceDate || new Date(),
       dueDate: initialData?.dueDate,
       items: initialData?.items || [],
-      tax: initialData?.tax || 0,
-      discount: initialData?.discount || 0,
+      taxPercentage: initialData?.taxPercentage || 0,
+      discountPercentage: initialData?.discountPercentage || 0,
       paymentInstructions: initialData?.paymentInstructions || "",
       notes: initialData?.notes || "",
     },
@@ -34,15 +34,18 @@ export const useInvoiceForm = (
   });
 
   const watchedItems = form.watch("items");
-  const watchedTax = form.watch("tax");
-  const watchedDiscount = form.watch("discount");
+  const watchedTaxPercentage = form.watch("taxPercentage");
+  const watchedDiscountPercentage = form.watch("discountPercentage");
 
   const subtotal = watchedItems.reduce(
     (acc, item) => acc + (item.quantity || 0) * (item.rate || 0),
     0
   );
 
-  const total = subtotal + (watchedTax || 0) - (watchedDiscount || 0);
+  const tax = subtotal * (watchedTaxPercentage / 100);
+  const discount = subtotal * (watchedDiscountPercentage / 100);
+
+  const total = subtotal + (tax || 0) - (discount || 0);
 
   const handleAddItem = () => {
     append({
@@ -60,8 +63,8 @@ export const useInvoiceForm = (
     form,
     fields,
     watchedItems,
-    watchedTax,
-    watchedDiscount,
+    tax,
+    discount,
     subtotal,
     total,
     handleAddItem,

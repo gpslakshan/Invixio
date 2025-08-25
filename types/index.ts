@@ -67,8 +67,8 @@ export type InvoiceData = {
   invoiceDate: Date;
   dueDate: Date;
   subtotal: number;
-  tax: number;
-  discount: number;
+  taxPercentage: number;
+  discountPercentage: number;
   total: number;
   notes?: string | null;
   logoUrl?: string | null;

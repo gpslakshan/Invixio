@@ -32,6 +32,8 @@ const EditInvoiceForm = ({ invoice, profile }: Props) => {
     fields,
     watchedItems,
     subtotal,
+    tax,
+    discount,
     total,
     handleAddItem,
     handleRemoveItem,
@@ -109,6 +111,8 @@ const EditInvoiceForm = ({ invoice, profile }: Props) => {
             <InvoiceSummary
               form={form}
               subtotal={subtotal}
+              tax={tax}
+              discount={discount}
               total={total}
               currency={profile.currency}
             />

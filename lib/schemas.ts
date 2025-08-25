@@ -70,8 +70,8 @@ export const invoiceSchema = z.object({
     .min(1, "At least one item is required"),
 
   // Financial details
-  tax: z.number().min(0, "Tax must be 0 or greater"),
-  discount: z.number().min(0, "Discount must be 0 or greater"),
+  taxPercentage: z.number().min(0, "Tax must be 0 or greater"),
+  discountPercentage: z.number().min(0, "Discount must be 0 or greater"),
 
   paymentInstructions: z
     .string()

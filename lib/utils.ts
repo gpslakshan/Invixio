@@ -205,6 +205,10 @@ export async function generateInvoicePDF(
 
   // fetch user currency
   const currency = await fetchUserCurrency();
+  const subTotal = invoice.subtotal;
+  const tax = subTotal * ((invoice.taxPercentage || 0) / 100);
+  const discount = subTotal * ((invoice.discountPercentage || 0) / 100);
+  const total = subTotal + tax - discount;
 
   // set global font
   pdf.setFont("helvetica");
@@ -331,18 +335,17 @@ export async function generateInvoicePDF(
     }
   );
   pdf.setFont("helvetica", "normal");
-  pdf.text("Tax", 130, 115 + offset + 15);
+  pdf.text(`Tax (${invoice.taxPercentage || 0}%)`, 130, 115 + offset + 15);
+  pdf.text(formatCurrencyWithSymbol(tax, currency), 190, 115 + offset + 15, {
+    align: "right",
+  });
   pdf.text(
-    formatCurrencyWithSymbol(invoice.tax, currency),
-    190,
-    115 + offset + 15,
-    {
-      align: "right",
-    }
+    `Discount (${invoice.discountPercentage || 0}%)`,
+    130,
+    115 + offset + 20
   );
-  pdf.text("Discount", 130, 115 + offset + 20);
   pdf.text(
-    `-${formatCurrencyWithSymbol(invoice.discount, currency)}`,
+    `-${formatCurrencyWithSymbol(discount, currency)}`,
     190,
     115 + offset + 20,
     { align: "right" }

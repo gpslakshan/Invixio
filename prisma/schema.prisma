@@ -47,8 +47,8 @@ model Invoice {
   invoiceDate         DateTime
   dueDate             DateTime
   subtotal            Float
-  tax                 Float
-  discount            Float
+  taxPercentage       Float
+  discountPercentage  Float
   total               Float
   notes               String?
   logoUrl             String?

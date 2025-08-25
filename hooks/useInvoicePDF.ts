@@ -25,48 +25,50 @@ export const useInvoicePDF = ({
   const createInvoiceData = (
     data: InvoiceFormData,
     isDraft: boolean = false
-  ): InvoiceData => ({
-    id: `INV${Date.now().toString()}`,
-    status: "DRAFT",
-    invoiceNumber: data.invoiceNumber || (isDraft ? "INV-DRAFT" : ""),
-    companyName: data.companyName || (isDraft ? "Your Company" : ""),
-    companyEmail:
-      data.companyEmail || (isDraft ? "your-email@company.com" : ""),
-    companyAddress:
-      data.companyAddress || (isDraft ? "Your Company Address" : ""),
-    clientName: data.clientName || (isDraft ? "Client Name" : ""),
-    clientEmail: data.clientEmail || (isDraft ? "client@email.com" : ""),
-    clientAddress: data.clientAddress || (isDraft ? "Client Address" : ""),
-    invoiceDate: data.invoiceDate || new Date(),
-    dueDate: data.dueDate || new Date(),
-    subtotal,
-    tax: data.tax || 0,
-    discount: data.discount || 0,
-    total,
-    notes: data.notes || (isDraft ? "" : ""),
-    logoUrl: logoUrl,
-    items:
-      data.items?.length > 0
-        ? data.items.map((item) => ({
-            description: item.description || (isDraft ? "Sample Item" : ""),
-            quantity: item.quantity || 1,
-            rate: item.rate || 0,
-            amount: (item.quantity || 1) * (item.rate || 0),
-          }))
-        : isDraft
-          ? [
-              {
-                description: "Sample Item - Add items above",
-                quantity: 1,
-                rate: 0,
-                amount: 0,
-              },
-            ]
-          : [],
-    paymentInstructions:
-      data.paymentInstructions ||
-      (isDraft ? "Payment instructions will appear here" : ""),
-  });
+  ): InvoiceData => {
+    return {
+      id: `INV${Date.now().toString()}`,
+      status: "DRAFT",
+      invoiceNumber: data.invoiceNumber || (isDraft ? "INV-DRAFT" : ""),
+      companyName: data.companyName || (isDraft ? "Your Company" : ""),
+      companyEmail:
+        data.companyEmail || (isDraft ? "your-email@company.com" : ""),
+      companyAddress:
+        data.companyAddress || (isDraft ? "Your Company Address" : ""),
+      clientName: data.clientName || (isDraft ? "Client Name" : ""),
+      clientEmail: data.clientEmail || (isDraft ? "client@email.com" : ""),
+      clientAddress: data.clientAddress || (isDraft ? "Client Address" : ""),
+      invoiceDate: data.invoiceDate || new Date(),
+      dueDate: data.dueDate || new Date(),
+      subtotal,
+      taxPercentage: data.taxPercentage || 0,
+      discountPercentage: data.discountPercentage || 0,
+      total,
+      notes: data.notes || (isDraft ? "" : ""),
+      logoUrl: logoUrl,
+      items:
+        data.items?.length > 0
+          ? data.items.map((item) => ({
+              description: item.description || (isDraft ? "Sample Item" : ""),
+              quantity: item.quantity || 1,
+              rate: item.rate || 0,
+              amount: (item.quantity || 1) * (item.rate || 0),
+            }))
+          : isDraft
+            ? [
+                {
+                  description: "Sample Item - Add items above",
+                  quantity: 1,
+                  rate: 0,
+                  amount: 0,
+                },
+              ]
+            : [],
+      paymentInstructions:
+        data.paymentInstructions ||
+        (isDraft ? "Payment instructions will appear here" : ""),
+    };
+  };
 
   const handlePreview = async () => {
     const data = form.getValues();

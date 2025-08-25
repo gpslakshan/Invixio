@@ -42,10 +42,11 @@ export async function createInvoice(
       0
     );
 
-    const total =
-      subtotal +
-      (validatedData.data.tax || 0) -
-      (validatedData.data.discount || 0);
+    const tax = subtotal * ((validatedData.data.taxPercentage || 0) / 100);
+    const discount =
+      subtotal * ((validatedData.data.discountPercentage || 0) / 100);
+
+    const total = subtotal + tax - discount;
 
     // Create invoice in database
     const invoice = await prisma.invoice.create({
@@ -60,8 +61,8 @@ export async function createInvoice(
         invoiceDate: validatedData.data.invoiceDate,
         dueDate: validatedData.data.dueDate,
         subtotal,
-        tax: validatedData.data.tax || 0,
-        discount: validatedData.data.discount || 0,
+        taxPercentage: validatedData.data.taxPercentage || 0,
+        discountPercentage: validatedData.data.discountPercentage || 0,
         total,
         notes: validatedData.data.notes,
         logoUrl: logoUrl,
@@ -162,11 +163,11 @@ export async function editInvoice(
       (acc, item) => acc + (item.quantity || 0) * (item.rate || 0),
       0
     );
+    const tax = subtotal * ((validatedData.data.taxPercentage || 0) / 100);
+    const discount =
+      subtotal * ((validatedData.data.discountPercentage || 0) / 100);
 
-    const total =
-      subtotal +
-      (validatedData.data.tax || 0) -
-      (validatedData.data.discount || 0);
+    const total = subtotal + tax - discount;
 
     // Update invoice in database
     const invoice = await prisma.invoice.update({
@@ -185,8 +186,8 @@ export async function editInvoice(
         invoiceDate: validatedData.data.invoiceDate,
         dueDate: validatedData.data.dueDate,
         subtotal,
-        tax: validatedData.data.tax || 0,
-        discount: validatedData.data.discount || 0,
+        taxPercentage: validatedData.data.taxPercentage || 0,
+        discountPercentage: validatedData.data.discountPercentage || 0,
         total,
         notes: validatedData.data.notes,
         logoUrl: logoUrl,
