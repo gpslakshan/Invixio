@@ -2,7 +2,7 @@ import { withAuth } from "@kinde-oss/kinde-auth-nextjs/middleware";
 
 export default withAuth(async function middleware() {}, {
   // Middleware still runs on all routes, but doesn't protect the followin routes
-  publicPaths: ["/", "/api/kinde-webhook"],
+  publicPaths: ["/", "/api/kinde-webhook", "/api/inngest"],
 });
 
 export const config = {
