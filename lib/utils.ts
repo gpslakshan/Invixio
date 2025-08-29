@@ -527,6 +527,20 @@ export async function sendInvoiceEmail(
   }
 }
 
-// export function delay(ms: number) {
-//   return new Promise((resolve) => setTimeout(resolve, ms));
-// }
+export function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Calculates the start of the current month and the start of the next month.
+ * @returns {{startOfMonth: Date, nextMonth: Date}} - An object containing the start and end dates.
+ */
+export function getDateRangeForPricingMonth(): {
+  startOfMonth: Date;
+  nextMonth: Date;
+} {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return { startOfMonth, nextMonth };
+}

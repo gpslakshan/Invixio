@@ -8,6 +8,7 @@ import {
   generateInvoicePDF,
   sendInvoiceEmail,
   uploadPDFToS3,
+  getDateRangeForPricingMonth,
 } from "@/lib/utils";
 import { EmailType, InvoiceFormData } from "@/types";
 import { InvoiceStatus } from "@prisma/client";
@@ -24,6 +25,39 @@ export async function createInvoice(
       return {
         status: "error",
         message: "You must be logged in to create an invoice",
+      };
+    }
+
+    // Check if the user is on the free plan and has reached the limit
+    const { startOfMonth, nextMonth } = getDateRangeForPricingMonth();
+    const [subscription, invoiceCount] = await Promise.all([
+      prisma.subscription.findUnique({
+        where: {
+          userId: user.id,
+        },
+        select: {
+          status: true,
+        },
+      }),
+      prisma.invoice.count({
+        where: {
+          userId: user.id,
+          createdAt: {
+            gte: startOfMonth,
+            lt: nextMonth,
+          },
+        },
+      }),
+    ]);
+
+    const isFreePlan = !subscription || subscription.status !== "active";
+    const hasReachedLimit = invoiceCount >= 5;
+
+    if (isFreePlan && hasReachedLimit) {
+      return {
+        status: "error",
+        message:
+          "You have reached your monthly invoice limit of 5. Please upgrade your plan to create more.",
       };
     }
 

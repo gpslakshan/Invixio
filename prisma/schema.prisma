@@ -14,20 +14,26 @@ datasource db {
 }
 
 model User {
-  id             String   @id @unique
+  id             String  @id @unique
   firstName      String
   lastName       String
   email          String
-  hasOnboarded   Boolean  @default(false)
+  hasOnboarded   Boolean @default(false)
   companyName    String
   companyEmail   String
   companyAddress String
   businessType   String
   currency       String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+
+  customerId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   Invoices Invoice[] // One-to-many: User -> Invoices
+
+  // One-to-one relationship
+  subscription Subscription? // A user can have one subscription, or none
 
   @@map("users")
 }
@@ -85,4 +91,20 @@ enum InvoiceStatus {
   PENDING
   PAID
   OVERDUE
+}
+
+model Subscription {
+  stripeSubscriptionId String    @id @unique
+  interval             String
+  status               String
+  planId               String
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  endedAt              DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // One-to-one relationship
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

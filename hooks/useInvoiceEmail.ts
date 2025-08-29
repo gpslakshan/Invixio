@@ -42,6 +42,10 @@ export const useInvoiceEmail = ({
 
       if (result.status === "error") {
         toast.error(result.message);
+        if (result.message.includes("monthly invoice limit")) {
+          router.push("/dashboard/pricing");
+          return;
+        }
       } else if (result.status === "warning") {
         toast.warning(result.message, { duration: 7000 });
         setIsNavigating(true);

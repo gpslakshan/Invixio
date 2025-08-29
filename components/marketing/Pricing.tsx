@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Check } from "lucide-react";
 
 import {
@@ -9,7 +10,8 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import Link from "next/link";
+import SubmitButton from "../shared/SubmitButton";
+import { createCheckoutSession } from "@/app/actions/subscriptions";
 
 interface PricingPlan {
   id: number;
@@ -37,7 +39,7 @@ export const PricingPlans: PricingPlan[] = [
     id: 1,
     cardTitle: "Pro",
     cardDescription:
-      "Unlock unlimited potential with advanced tools designed for growing businesses.",
+      "Best for growing businesses that need unlimited invoices and advanced analytics.",
     priceTitle: "$29/month",
     benefits: [
       "Unlimited invoices",
@@ -48,7 +50,7 @@ export const PricingPlans: PricingPlan[] = [
   },
 ];
 
-export function Pricing({ id }: { id: string }) {
+export function Pricing({ id }: { id?: string }) {
   return (
     <section className="py-16" id={id}>
       {/* Section Header */}
@@ -105,8 +107,8 @@ export function Pricing({ id }: { id: string }) {
 
             <CardFooter className="mt-6">
               {item.id === 1 ? (
-                <form className="w-full">
-                  <Button className="w-full">Buy Plan</Button>
+                <form className="w-full" action={createCheckoutSession}>
+                  <SubmitButton text="Buy Plan" classname="mt-5 w-full" />
                 </form>
               ) : (
                 <Button variant="outline" className="w-full" asChild>
