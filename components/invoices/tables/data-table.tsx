@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              {["DRAFT", "PENDING", "PAID", "CANCELLED"].map((status) => {
+              {["DRAFT", "PENDING", "PAID", "OVERDUE"].map((status) => {
                 const selected =
                   (table.getColumn("status")?.getFilterValue() as string[]) ??
                   [];
