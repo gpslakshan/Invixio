@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FileText, LayoutDashboard, ShieldCheck } from "lucide-react";
+import { FileText, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Logo from "@/public/logo.svg";
@@ -11,6 +11,7 @@ export const links = [
   { id: 0, href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { id: 1, href: "/dashboard/invoices", label: "Invoices", icon: FileText },
   { id: 2, href: "/dashboard/upgrade", label: "Upgrade", icon: ShieldCheck },
+  { id: 3, href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar() {

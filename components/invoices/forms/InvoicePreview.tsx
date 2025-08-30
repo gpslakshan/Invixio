@@ -14,7 +14,7 @@ const InvoicePreview = ({
 }: Props) => {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="text-lg font-semibold">Invoice Preview</h3>
@@ -48,8 +48,8 @@ const InvoicePreview = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t bg-gray-50 flex justify-between">
-          <p className="text-sm text-gray-600">
+        <div className="p-4 border-t bg-gray-50 dark:bg-gray-900 flex justify-between">
+          <p className="text-sm text-gray-600 dark:text-white">
             This is a preview. Make changes in the form to see updates.
           </p>
           <div className="flex gap-2">

@@ -84,3 +84,9 @@ export const invoiceSchema = z.object({
     .max(500, "Notes can be maximum of 500 characters")
     .optional(),
 });
+
+export const companyInfoSchema = z.object({
+  companyName: z.string().min(1, "Company name is required"),
+  companyEmail: z.string().email("Invalid email address"),
+  companyAddress: z.string().min(1, "Company address is required"),
+});

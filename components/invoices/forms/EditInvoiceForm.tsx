@@ -76,7 +76,7 @@ const EditInvoiceForm = ({ invoice, profile }: Props) => {
         isSticky={sticky}
       />
 
-      <div className="p-6 space-y-6 border bg-white shadow">
+      <div className="p-6 space-y-6 border shadow">
         <Form {...form}>
           <form className="space-y-6">
             {/* Top Section: Issuer Details and Logo */}

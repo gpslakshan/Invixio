@@ -26,7 +26,7 @@ const InvoiceFormActions = ({
   return (
     <div
       className={cn(
-        "w-full bg-white z-10 sticky top-0 p-4 flex flex-col md:flex-row gap-2 justify-between",
+        "w-full bg-white dark:bg-gray-900 z-10 sticky top-0 p-4 flex flex-col md:flex-row gap-2 justify-between",
         isSticky ? "shadow-md" : ""
       )}
     >

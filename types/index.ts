@@ -1,4 +1,8 @@
-import { invoiceSchema, onboardingSchema } from "@/lib/schemas";
+import {
+  companyInfoSchema,
+  invoiceSchema,
+  onboardingSchema,
+} from "@/lib/schemas";
 import { InvoiceStatus } from "@prisma/client";
 import { JSX } from "react";
 import { z } from "zod";
@@ -89,3 +93,5 @@ export enum EmailType {
   REMINDER = "reminder",
   DELETE = "delete",
 }
+
+export type CompanyInfoFormData = z.infer<typeof companyInfoSchema>;

@@ -33,7 +33,7 @@ export function UserAvatar({ user }: Props) {
           <Link href="/dashboard">Dashboard</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/dashboard/invoices">Invoices</Link>
+          <Link href="/dashboard/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/dashboard/profile">Profile</Link>
