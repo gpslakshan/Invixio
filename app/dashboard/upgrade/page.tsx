@@ -27,7 +27,7 @@ async function getSubscription(userId: string) {
   return subscription;
 }
 
-const PricingPageContent = async () => {
+const UpgradePageContent = async () => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -58,12 +58,12 @@ const PricingPageContent = async () => {
   return <Pricing />;
 };
 
-const DashboardPricingPage = () => {
+const UpgradePage = () => {
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <PricingPageContent />
+      <UpgradePageContent />
     </Suspense>
   );
 };
 
-export default DashboardPricingPage;
+export default UpgradePage;
