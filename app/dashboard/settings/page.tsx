@@ -1,4 +1,6 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { Suspense } from "react";
+
 import {
   Card,
   CardHeader,
@@ -10,8 +12,9 @@ import { fetchUserProfile } from "@/lib/utils";
 import ThemeSelect from "./_components/ThemeSelect";
 import UpdateCompanyInformationForm from "./_components/UpdateCompanyInformationForm";
 import { currencies } from "@/constants";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
-export default async function SettingsPage() {
+async function SettingsPageContent() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   if (!user?.id) return <p className="p-8">User not found</p>;
@@ -71,5 +74,13 @@ export default async function SettingsPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <SettingsPageContent />
+    </Suspense>
   );
 }
