@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createInvoice, editInvoice } from "@/app/actions/invoices";
 import { InvoiceFormData } from "@/types";
+import { useInvoiceStore } from "@/stores/invoice-store";
 
 interface UseInvoiceEmailProps {
   form: UseFormReturn<InvoiceFormData>;
@@ -19,6 +20,7 @@ export const useInvoiceEmail = ({
   const [submittingForm, setSubmittingForm] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const router = useRouter();
+  const { incrementInvoiceCount } = useInvoiceStore();
 
   const handleSendEmail = async () => {
     // Validate form before submitting
@@ -52,6 +54,7 @@ export const useInvoiceEmail = ({
         router.push("/dashboard/invoices");
       } else {
         toast.success(result.message, { duration: 7000 });
+        incrementInvoiceCount();
         setIsNavigating(true);
         router.push("/dashboard/invoices");
       }

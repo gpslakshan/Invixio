@@ -22,7 +22,15 @@ async function getData(userId: string): Promise<
   // Get the start and end of the current month
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  const lastDayOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+    999
+  );
 
   // Define colors for the chart based on status.
   // Note: These should match the CSS variables defined in the global styles or component.

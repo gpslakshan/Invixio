@@ -6,6 +6,7 @@ import { CreditCard, FileText, LayoutDashboard, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Logo from "@/public/logo.svg";
+import InvoiceUsage from "../shared/InvoiceUsage";
 
 export const links = [
   { id: 0, href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -23,8 +24,10 @@ export function Sidebar() {
   };
 
   return (
-    <div className="hidden lg:block border-r bg-muted/40">
-      <div className="flex flex-col max-h-screen h-full gap-2">
+    <aside className="hidden lg:block sticky top-0 h-svh w-[280px] border-r bg-muted/40">
+      {/* 3 rows: header | scrollable nav | bottom widget */}
+      <div className="h-full grid grid-rows-[auto_1fr_auto]">
+        {/* Logo / header */}
         <div className="h-14 lg:h-[60px] flex items-center border-b px-4 lg:px-6">
           <Link
             href="/dashboard"
@@ -38,27 +41,35 @@ export function Sidebar() {
           </Link>
         </div>
 
-        <nav className="flex-1">
-          <ul className="flex flex-col items-start px-2 lg:px-4 text-sm font-medium">
-            {links.map((link) => (
-              <li key={link.id} className="w-full">
-                <Link
-                  href={link.href}
-                  className={cn(
-                    isActive(link.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground",
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
-                  )}
-                >
-                  <link.icon className="size-4" />
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* Scrollable nav area */}
+        <div className="overflow-y-auto">
+          <nav className="mt-4">
+            <ul className="flex flex-col items-start px-2 lg:px-4 text-sm font-medium">
+              {links.map((link) => (
+                <li key={link.id} className="w-full">
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      isActive(link.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground",
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
+                    )}
+                  >
+                    <link.icon className="size-4" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        {/* Pinned bottom */}
+        <div className="px-2 py-2">
+          <InvoiceUsage />
+        </div>
       </div>
-    </div>
+    </aside>
   );
 }

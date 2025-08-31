@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Footer } from "@/components/layout/Footer";
 import { getCurrentUser, getUserOnboardingStatus } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import StoreInitializer from "@/components/shared/StoreInitializer";
 
 export default async function DashboardLayout({
   children,
@@ -22,6 +23,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="w-full min-h-screen grid lg:grid-cols-[280px_1fr]">
+      <StoreInitializer />
       <Sidebar />
       <div className="flex flex-col">
         <Header />

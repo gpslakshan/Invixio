@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -82,6 +83,11 @@ export async function POST(req: Request) {
           userId: user.id,
         },
       });
+
+      // After updating subscription in database, trigger a client-side store refresh
+      // by revalidating the layout. This helps to update info in the <InvoiceUsage /> component
+      revalidatePath("/dashboard", "layout");
+
       break;
     }
 

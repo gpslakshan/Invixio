@@ -40,6 +40,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useInvoiceStore } from "@/stores/invoice-store";
 
 interface Props {
   invoice: InvoiceDataTableItem;
@@ -50,6 +51,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
   const [isDeletingInvoice, setIsDeletingInvoice] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { decrementInvoiceCount } = useInvoiceStore();
   const isPaid = invoice.status === "PAID";
 
   const handleMarkAsPaid = async (invoiceId: string) => {
@@ -100,6 +102,7 @@ const InvoiceTableActions = ({ invoice }: Props) => {
     const result = await deleteInvoice(invoiceId);
     if (result.status === "success") {
       toast.success(result.message);
+      decrementInvoiceCount();
     } else {
       toast.error(result.message);
     }

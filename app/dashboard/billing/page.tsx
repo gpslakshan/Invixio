@@ -40,15 +40,16 @@ const BillingPageContent = async () => {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Edit Subscription</CardTitle>
+          <CardTitle>Manage your subscription</CardTitle>
           <CardDescription>
-            Click on the button below, this will give you the opportunity to
-            change your payment details and view your invoices at the same time.
+            Click the button below to securely access the Stripe Customer
+            Portal. From there, you can update your payment information, manage
+            your subscription, and view all your invoices anytime.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={createCustomerPortal}>
-            <SubmitButton text="View Subscription Details" />
+            <SubmitButton text="Open Stripe Customer Portal" />
           </form>
         </CardContent>
       </Card>

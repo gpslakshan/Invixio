@@ -568,3 +568,52 @@ export async function deleteInvoice(invoiceId: string) {
     };
   }
 }
+
+export async function getInvoiceStats() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error("Unauthorized");
+    }
+
+    const { startOfMonth, nextMonth } = getDateRangeForPricingMonth();
+
+    // Get invoice count for current month
+    const invoiceCount = await prisma.invoice.count({
+      where: {
+        userId: user.id,
+        createdAt: {
+          gte: startOfMonth,
+          lt: nextMonth,
+        },
+      },
+    });
+
+    // Check if user has active subscription
+    const subscription = await prisma.subscription.findUnique({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        status: true,
+      },
+    });
+
+    const isPro = subscription?.status === "active";
+
+    return {
+      success: true,
+      data: {
+        invoiceCount,
+        isPro,
+        maxInvoices: isPro ? Infinity : 5,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching invoice stats:", error);
+    return {
+      success: false,
+      error: "Failed to fetch invoice statistics",
+    };
+  }
+}
