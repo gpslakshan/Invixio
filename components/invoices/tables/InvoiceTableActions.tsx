@@ -75,16 +75,24 @@ const InvoiceTableActions = ({ invoice }: Props) => {
   const handleDownloadInvoice = async (invoiceId: string) => {
     setIsDownloading(true);
 
+    // Open a new window synchronously (allowed by Safari)
+    const newWindow = window.open("", "_blank");
+
     const result = await downloadInvoice(invoiceId);
     if (result.status === "success") {
       const invoiceUrl = result.data;
-      window.open(invoiceUrl, "_blank"); // Open the URL in a new browser tab.
+      if (newWindow) {
+        newWindow.location.href = invoiceUrl!; // Navigate once we have the URL
+      }
     } else {
       toast.error(result.message);
+      if (newWindow) {
+        newWindow.close(); // Clean up if failed
+      }
     }
 
     setIsDownloading(false);
-    setIsMenuOpen(false); // <-- close dropdown AFTER download completes
+    setIsMenuOpen(false);
   };
 
   const handleReminderEmail = async (invoiceId: string) => {
