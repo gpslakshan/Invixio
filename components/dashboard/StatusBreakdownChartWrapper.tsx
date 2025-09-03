@@ -19,29 +19,19 @@ async function getData(userId: string): Promise<
     fill: string;
   }[]
 > {
-  // Get the start and end of the current month
+  // Calculate the date range: last 30 days from "now"
   const today = new Date();
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastDayOfMonth = new Date(
-    today.getFullYear(),
-    today.getMonth() + 1,
-    0,
-    23,
-    59,
-    59,
-    999
-  );
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 30);
 
-  // Define colors for the chart based on status.
-  // Note: These should match the CSS variables defined in the global styles or component.
+  // Define colors for the chart based on status
   const statusColors = {
     PAID: "var(--color-paid)",
     PENDING: "var(--color-pending)",
     OVERDUE: "var(--color-overdue)",
   };
 
-  // Use Prisma's `groupBy` to count invoices for the current user within the current month,
-  // grouped by their status.
+  // Query invoices in the last 30 days for this user, grouped by status
   const invoiceCounts = await prisma.invoice.groupBy({
     by: ["status"],
     _count: {
@@ -50,17 +40,16 @@ async function getData(userId: string): Promise<
     where: {
       userId: userId,
       createdAt: {
-        gte: firstDayOfMonth,
-        lte: lastDayOfMonth,
+        gte: thirtyDaysAgo,
+        lte: today,
       },
-      // Exclude DRAFT invoices from the breakdown, as they are not yet finalized.
       status: {
-        not: "DRAFT",
+        not: "DRAFT", // exclude drafts
       },
     },
   });
 
-  // Transform the result into the desired format for the chart
+  // Transform the result into the chart-friendly format
   const chartData = invoiceCounts.map((group) => ({
     status: group.status.toLowerCase(),
     count: group._count.status,
@@ -83,7 +72,7 @@ const StatusBreakdownChartWrapper = async () => {
       <CardHeader>
         <CardTitle>Invoice Status Breakdown</CardTitle>
         <CardDescription>
-          A breakdown of all invoices by their status for the current month.
+          A breakdown of all invoices by their status for the last 30 days.
         </CardDescription>
       </CardHeader>
       {isEmptyState ? (
