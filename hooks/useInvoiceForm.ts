@@ -37,13 +37,16 @@ export const useInvoiceForm = (
   const watchedTaxPercentage = form.watch("taxPercentage");
   const watchedDiscountPercentage = form.watch("discountPercentage");
 
-  const subtotal = watchedItems.reduce(
-    (acc, item) => acc + (item.quantity || 0) * (item.rate || 0),
-    0
+  const subtotal = Number(
+    watchedItems
+      .reduce((acc, item) => acc + (item.quantity || 0) * (item.rate || 0), 0)
+      .toFixed(2)
   );
 
-  const tax = subtotal * (watchedTaxPercentage / 100);
-  const discount = subtotal * (watchedDiscountPercentage / 100);
+  const tax = Number((subtotal * (watchedTaxPercentage / 100)).toFixed(2));
+  const discount = Number(
+    (subtotal * (watchedDiscountPercentage / 100)).toFixed(2)
+  );
 
   const total = subtotal + (tax || 0) - (discount || 0);
 

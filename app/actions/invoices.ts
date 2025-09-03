@@ -71,14 +71,20 @@ export async function createInvoice(
     }
 
     // Calculate amounts
-    const subtotal = validatedData.data.items.reduce(
-      (acc, item) => acc + (item.quantity || 0) * (item.rate || 0),
-      0
+    const subtotal = Number(
+      validatedData.data.items
+        .reduce((acc, item) => acc + (item.quantity || 0) * (item.rate || 0), 0)
+        .toFixed(2)
     );
 
-    const tax = subtotal * ((validatedData.data.taxPercentage || 0) / 100);
-    const discount =
-      subtotal * ((validatedData.data.discountPercentage || 0) / 100);
+    const tax = Number(
+      (subtotal * ((validatedData.data.taxPercentage || 0) / 100)).toFixed(2)
+    );
+    const discount = Number(
+      (subtotal * ((validatedData.data.discountPercentage || 0) / 100)).toFixed(
+        2
+      )
+    );
 
     const total = subtotal + tax - discount;
 
@@ -193,13 +199,20 @@ export async function editInvoice(
     }
 
     // Calculate amounts
-    const subtotal = validatedData.data.items.reduce(
-      (acc, item) => acc + (item.quantity || 0) * (item.rate || 0),
-      0
+    const subtotal = Number(
+      validatedData.data.items
+        .reduce((acc, item) => acc + (item.quantity || 0) * (item.rate || 0), 0)
+        .toFixed(2)
     );
-    const tax = subtotal * ((validatedData.data.taxPercentage || 0) / 100);
-    const discount =
-      subtotal * ((validatedData.data.discountPercentage || 0) / 100);
+
+    const tax = Number(
+      (subtotal * ((validatedData.data.taxPercentage || 0) / 100)).toFixed(2)
+    );
+    const discount = Number(
+      (subtotal * ((validatedData.data.discountPercentage || 0) / 100)).toFixed(
+        2
+      )
+    );
 
     const total = subtotal + tax - discount;
 
