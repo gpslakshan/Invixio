@@ -4,7 +4,7 @@ import { DollarSign, FileCheck, FileText, FileWarning } from "lucide-react";
 import { prisma } from "@/lib/db";
 import {
   fetchUserCurrency,
-  formatCurrencyValue,
+  formatNumber,
   getCurrencySymbol,
   getCurrentUser,
 } from "@/lib/utils";
@@ -78,7 +78,7 @@ async function DashboardBlocksContent() {
         <CardContent>
           <h2 className="text-2xl font-bold">
             {getCurrencySymbol(currency)}{" "}
-            {formatCurrencyValue(
+            {formatNumber(
               revenueInvoices.reduce((acc, invoice) => acc + invoice.total, 0)
             )}
           </h2>

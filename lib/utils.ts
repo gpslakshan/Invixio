@@ -87,6 +87,34 @@ export const formatCurrencyWithSymbol = (
   return `${getCurrencySymbol(currency)} ${formatCurrencyValue(value)}`;
 };
 
+/**
+ * Formats a number (or numeric string) with comma separators and two decimal places.
+ *
+ * - Accepts either a `number` or a numeric `string` as input.
+ * - Uses US locale formatting by default (e.g., "31,498.55").
+ * - Always enforces two decimal places.
+ *
+ * @param value - The number or numeric string to format.
+ * @returns The formatted string with commas and two decimal places.
+ * @throws Error if the input cannot be parsed as a number.
+ *
+ * @example
+ * formatNumber(31498.55);   // "31,498.55"
+ * formatNumber("31498.55"); // "31,498.55"
+ */
+export function formatNumber(value: string | number): string {
+  const num = typeof value === "string" ? parseFloat(value) : value;
+
+  if (isNaN(num)) {
+    throw new Error("Invalid number input");
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(num);
+}
+
 export async function getUserOnboardingStatus(
   user: KindeUser<Record<string, string>>
 ) {
