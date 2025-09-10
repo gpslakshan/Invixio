@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Invixio: Effortless Invoice Management 🚀
 
-## Getting Started
+Invixio is a powerful and intuitive Software-as-a-Service (SaaS) application designed to streamline the process of creating, managing, and sending professional invoices. Built for freelancers, small businesses, and enterprises, Invixio takes the hassle out of billing, allowing you to focus on what you do best.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![INVIXIO Dashboard](https://github.com/gpslakshan/Invixio/blob/main/public/hero.png)
+_INVIXIO Dashboard - Track, Manage and Send your invoices with ease._
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Streamlined Invoicing & Management**: Create, edit, and send professional invoices in minutes. Our intuitive dashboard gives you a complete overview of all your billing, allowing you to easily track, update, and manage every invoice in one place.
+- **Instant Invoice Preview**: See exactly what your clients will see, before you even send it. Our real-time preview feature lets you perfect every detail of your invoice, ensuring it looks professional and polished from the start.
+- **Real-Time Insights & Analytics**: Make smarter business decisions with a powerful dashboard. Get a clear view of your financial health, track payment statuses, and gain valuable insights into your cash flow with easy-to-read reports.
+- **Professional & Sharable Invoices**: Present a polished brand image with every invoice you send. Generate high-quality PDF invoices that are ready to download, print, or send directly to your clients via email with just a click.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+### Frontend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js**: A React framework for building fast and scalable web applications.
+- **shadcn/ui**: A collection of reusable components for building beautiful user interfaces.
+- **tailwindcss**: A utility-first CSS framework for rapid UI development.
+- **zustand**: A small, fast, and scalable state management solution.
+- **react-hook-form**: A performant and flexible library for managing forms in React.
+- **zod**: A TypeScript-first schema validation library.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Backend
 
-## Deploy on Vercel
+- **Prisma**: A modern database toolkit that makes it easy to work with databases.
+- **PostgreSQL**: A powerful, open-source relational database.
+- **Neon**: A serverless PostgreSQL platform.
+- **Kinde Auth**: A secure and easy-to-use authentication service.
+- **Inngest**: A serverless functions platform used for handling cron jobs and background tasks.
+- **Amazon S3**: For secure and scalable file uploads.
+- **Amazon SES**: For sending emails reliably.
+- **Stripe**: For secure payment processing.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Vercel**: For seamless and fast deployment of the Next.js application.
